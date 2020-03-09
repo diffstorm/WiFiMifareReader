@@ -1,7 +1,9 @@
 #include <Reader.h>
-#include <led.h>
+#include<Buzzer.h>
+
 #define RST_PIN 5
 #define SS_PIN 4
+//BZR_Tone_t t;
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 MFRC522::MIFARE_Key key;
@@ -10,7 +12,6 @@ byte blockAddres = 4;
 byte trailerBlock = 7;
 LinkedList<long> passwordList = LinkedList<long>();
 card_t card;
-
 
 void Reader_Prepare_Key()
 {
@@ -54,15 +55,17 @@ bool Reader_IsMifare()
     return ret;
 }
 
-bool Reader_ReadBlock()
+READER_status_t Reader_ReadBlock()
 {
+
     MFRC522::StatusCode status;
     byte buffer[18];
     byte bufferSize = sizeof(buffer);
-    bool ret = false;
+    READER_status_t ret = NOTFOUND;
 
     if (mfrc522.PICC_IsNewCardPresent())
     {
+
         if (mfrc522.PICC_ReadCardSerial())
         {
             if (mfrc522.uid.size > 0)
@@ -82,13 +85,23 @@ bool Reader_ReadBlock()
                         card.password |= ((long)buffer[3]) & (0xFF);
                         Serial.print("kart ici sifre= ");
                         Serial.println(card.password);
-                        ret = true;
+                        ret = READ_OK;
+
                         
                     }
+                    ret=READ_ERROR;
+                    
                 }
+                ret=AUTH_ERROR;
+                
             }
+            ret=UID_LEN_ERROR;
+            
         }
+        ret=CAN_NOT_READ_UID;
+        
     }
+
     return ret;
 }
 
@@ -106,9 +119,22 @@ bool Reader_ComparePassword()
         {
             passwordList.remove(i);
             ret = true;
+            Serial.println("basarili altında buzzer set");
+            //BZR_SetTone(ACCESS_CONFIRMED);
+            Serial.println("settone calisti");
+            //Serial.println(BZR_State);
             break;
-        }  
+        }
+        else
+        {
+            //BZR_SetTone(ACCESS_DENIED);
+
+            break;
+        }
     }
+    
+    //Serial.println(t);
+    //BZR_Play_tone();
     return ret;
 }
 
@@ -129,16 +155,17 @@ bool READER_handler()
         if (0 != Reader_ComparePassword())
         {
             ret = true;
-            LED_SetAction(LED_ACTION_ACCESS_CONFIRMED);
+            BZR_SetAction(BZR_ACCESS_CONFIRMED);
         }
         else
         {
-            LED_SetAction(LED_ACTION_ACCESS_DENIED);
+            BZR_SetAction(BZR_ACCESS_DENIED);
         }
     }
     else
     {
-        LED_SetAction(LED_ACTION_CARD_READ_ERROR);
+        BZR_SetAction(NONE);
     }
+
     return ret;
 }

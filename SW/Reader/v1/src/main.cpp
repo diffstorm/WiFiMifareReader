@@ -4,29 +4,22 @@
 #include <IRremotes.h>
 #include <Reader.h>
 #include <ESPControl.h>
-#include <led.h>
-
-int *ptr1;
-int *ptr2;
-int x =5 ;
-
-int* str[] = 
-{
-  ptr1,
-  ptr2,
-};
-
+#include<Buzzer.h>
 bool ret=false;
 void setup() {
   Serial.begin(115200);       
   pinMode(15,OUTPUT);
   Reader_Init();
   IRremote_Init();
+  BZR_Init();
+  
+  
    Serial.println("setup init");
 }
 
 void loop() {
-  //deneme
+  Serial.println("TEST");
   ESP_Handler();
+  BZR_Handler();
   delay(100);
 }

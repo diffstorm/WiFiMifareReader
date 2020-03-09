@@ -3,8 +3,8 @@
 #include <Timer.h>
 #include <led.h>
 
-#define LED_GREEN 0         //D3 pini
-#define LED_RED   2         //D4 pini
+#define LED_GREEN 2
+#define LED_RED   1
 #define LED_DURATION 2
 
 typedef enum

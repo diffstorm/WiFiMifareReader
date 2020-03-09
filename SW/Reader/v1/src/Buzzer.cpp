@@ -216,7 +216,7 @@ void BZR_Handler()
             BZR_sys->timer_id = BZR_sys->timer.after((Tones[BZR_action].tone[BZR_sys->index].duration), BZR_TimerCallback);
             if(0 <= BZR_sys->timer_id)
             {
-                BZR_State=BZR_STATE_IDLE;
+                BZR_State=BZR_STATE_WAIT;
             }
         }
         else

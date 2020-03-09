@@ -7,9 +7,7 @@ IRsend irsend(IRSend_led);
 decode_results results;
 
 void IRremote_Init()
-{  
-
-    
+{
     irsend.begin();
     irrecv.enableIRIn();
 }
