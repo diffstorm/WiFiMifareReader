@@ -1,6 +1,6 @@
 #include <Reader.h>
 #include<Buzzer.h>
-
+//#include <led.h>
 #define RST_PIN 5
 #define SS_PIN 4
 //BZR_Tone_t t;
@@ -65,7 +65,6 @@ READER_status_t Reader_ReadBlock()
 
     if (mfrc522.PICC_IsNewCardPresent())
     {
-
         if (mfrc522.PICC_ReadCardSerial())
         {
             if (mfrc522.uid.size > 0)
@@ -86,20 +85,11 @@ READER_status_t Reader_ReadBlock()
                         Serial.print("kart ici sifre= ");
                         Serial.println(card.password);
                         ret = READ_OK;
-
-                        
                     }
-                    ret=READ_ERROR;
-                    
                 }
-                ret=AUTH_ERROR;
-                
             }
-            ret=UID_LEN_ERROR;
-            
         }
-        ret=CAN_NOT_READ_UID;
-        
+
     }
 
     return ret;
@@ -119,22 +109,13 @@ bool Reader_ComparePassword()
         {
             passwordList.remove(i);
             ret = true;
-            Serial.println("basarili altında buzzer set");
-            //BZR_SetTone(ACCESS_CONFIRMED);
-            Serial.println("settone calisti");
-            //Serial.println(BZR_State);
             break;
         }
         else
         {
-            //BZR_SetTone(ACCESS_DENIED);
-
             break;
         }
     }
-    
-    //Serial.println(t);
-    //BZR_Play_tone();
     return ret;
 }
 
@@ -148,24 +129,28 @@ void READER_stop()
 bool READER_handler()
 {
     bool ret = false;
+    //BZR_SetAction(BZR_NONE);
+    //LED_SetAction(LED_ACTION_IDLE);
     Reader_Fill_List();
-    if (false != Reader_ReadBlock())
+    if (READ_OK == Reader_ReadBlock())
     {
+        Serial.println("kart okunuyor!!!");
         READER_stop();
         if (0 != Reader_ComparePassword())
         {
             ret = true;
+            //LED_SetAction(LED_ACTION_ACCESS_CONFIRMED);
             BZR_SetAction(BZR_ACCESS_CONFIRMED);
         }
         else
-        {
+        {   //LED_SetAction(LED_ACTION_ACCESS_DENIED);
             BZR_SetAction(BZR_ACCESS_DENIED);
         }
     }
     else
     {
-        BZR_SetAction(NONE);
+        //BZR_SetAction(BZR_NONE);
+        //LED_SetAction(LED_ACTION_IDLE);
     }
-
     return ret;
 }

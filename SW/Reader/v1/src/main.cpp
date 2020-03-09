@@ -5,12 +5,14 @@
 #include <Reader.h>
 #include <ESPControl.h>
 #include<Buzzer.h>
+//#include <led.h>
 bool ret=false;
 void setup() {
   Serial.begin(115200);       
   pinMode(15,OUTPUT);
   Reader_Init();
   IRremote_Init();
+  //LED_init();
   BZR_Init();
   
   
@@ -18,8 +20,8 @@ void setup() {
 }
 
 void loop() {
-  Serial.println("TEST");
   ESP_Handler();
   BZR_Handler();
+  //LED_Handler();
   delay(100);
 }

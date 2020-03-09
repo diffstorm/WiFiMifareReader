@@ -9,7 +9,7 @@ typedef struct {
 
 typedef struct {
     UID_t uid;
-    uint32_t password;
+    int32_t password;
 }card_t;
 
 typedef enum{

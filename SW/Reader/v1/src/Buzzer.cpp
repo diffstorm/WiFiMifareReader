@@ -1,6 +1,7 @@
 
 #include <malloc.h>
 #include <Timer.h>
+#include <Ticker.h>
 #include "Buzzer.h"
 #define buzzerPin 15
 
@@ -50,7 +51,9 @@ typedef struct
 
 typedef struct
 {
-    Timer timer;
+    //Timer timer;
+    uint16_t current_time;
+    uint16_t prev_time;
     int8_t timer_id;
     uint8_t index;
     bool timeout;
@@ -70,7 +73,7 @@ BZR_Note_t Tone_ACCESS_CONFIRMED[] =
     {buzzerPin,fH, 500, HIGH},
     {buzzerPin,0, 500, LOW},
     {buzzerPin,dSH, 500, HIGH},
-
+    {buzzerPin,0, 500, LOW},
 };
 
 BZR_Note_t Tone_ACCESS_DENIED[] = 
@@ -158,17 +161,18 @@ void BZR_SetAction(BZR_Tone_t BZR_tone)
     {
         if(0 <= BZR_sys->timer_id)
         {
-            BZR_sys->timer.stop(BZR_sys->timer_id);
-            BZR_sys->timer_id = -1;
+            //BZR_sys->timer.stop(BZR_sys->timer_id);
+            //BZR_sys->timer_id = -1;
         }
-        free(BZR_sys);
-        BZR_sys = NULL;
+        //free(BZR_sys);
+        //BZR_sys = NULL;
     }
 }
 
 void BZR_Set_Pin(uint8_t BZR_pin, bool polarity)
 {
     digitalWrite(BZR_pin, polarity);
+    analogWrite(buzzerPin,255);
 }
 
 void BZR_Set_frequency(uint16_t frequency)
@@ -182,14 +186,17 @@ void BZR_Set_frequency(uint16_t frequency)
 void BZR_TimerCallback()
 {
     BZR_sys->timeout=true;
+    Serial.println("timer ++");
 }
 
 void BZR_Handler()
 {
+   
+
     switch(BZR_State)
     {
     case BZR_STATE_IDLE:
-        if(NONE!= BZR_action)
+        if(BZR_NONE!= BZR_action)
         {
             BZR_sys=(BZR_sys_t*)malloc(sizeof(BZR_sys_t));
             if(NULL != BZR_sys)
@@ -201,23 +208,32 @@ void BZR_Handler()
         }
         else
         {
-            Serial.println("none geldi");
             digitalWrite(buzzerPin,LOW);
             break;
         }
 
     case BZR_STATE_PERFORM:
+        delay(20);
         BZR_Set_frequency(Tones[BZR_action].tone[BZR_sys->index].frequency);
         BZR_Set_Pin(Tones[BZR_action].tone[BZR_sys->index].pin, Tones[BZR_action].tone[BZR_sys->index].polarity);
         Serial.println("gorev geldi");
         if(0 < Tones[BZR_action].tone[BZR_sys->index].duration)
         {
             BZR_sys->timeout=false;
-            BZR_sys->timer_id = BZR_sys->timer.after((Tones[BZR_action].tone[BZR_sys->index].duration), BZR_TimerCallback);
-            if(0 <= BZR_sys->timer_id)
+            //BZR_sys->timer_id = BZR_sys->timer.after((Tones[BZR_action].tone[BZR_sys->index].duration), BZR_TimerCallback);
+
+            BZR_sys->current_time = millis();
+            if((Tones[BZR_action].tone[BZR_sys->index].duration) < BZR_sys ->current_time )
+            {
+                BZR_sys->timeout = true;
+                BZR_sys->current_time = 0;
+            }
+
+            /*if(0 <= BZR_sys->timer_id)
             {
                 BZR_State=BZR_STATE_WAIT;
-            }
+            } */
+            BZR_State=BZR_STATE_WAIT;
         }
         else
         {
@@ -225,11 +241,12 @@ void BZR_Handler()
             break;
         }
     case BZR_STATE_WAIT:
-        BZR_sys->timer.update();
+        //BZR_sys->timer.update();
         if (false != BZR_sys->timeout)
         {
-            BZR_sys->timer.stop(BZR_sys->timer_id);
-            BZR_sys->timer_id=-1;
+           // BZR_sys->timer.stop(BZR_sys->timer_id);
+            Serial.println("timer durdu");
+            //BZR_sys->timer_id=-1;
             BZR_State=BZR_STATE_CHECK;
         }
         else
@@ -239,25 +256,33 @@ void BZR_Handler()
     case BZR_STATE_CHECK:
         if(BZR_sys->index < Tones[BZR_action].size)
         {
+            
+            Serial.println(Tones[BZR_action].size);
+            Serial.print("Nota index: ");
+            Serial.println(BZR_sys->index);
             BZR_sys->index++;
             BZR_State=BZR_STATE_PERFORM;
+            
+            Serial.print("Nota index arttırılmıs: ");
+            Serial.print(BZR_sys->index);
             break;
         }
         else
         {
             free(BZR_sys);
-            BZR_sys=NULL;
+            Serial.println("buzzer gorevi tamamlandi");
+            //BZR_sys=NULL;
+            break;
+            //flag=false;
+            
         }
 
         default:
         BZR_State = BZR_STATE_IDLE;
-        BZR_action = NONE;
+        BZR_action = BZR_NONE;
         break;
     }
 }
-
-
-    
 
 
 

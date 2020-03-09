@@ -13,27 +13,20 @@ void ledYak()
 
 void ESP_Handler()
 {
-     obstacle_status ret = FOUND; //IRremote_Handler();
-     bool status = true;
+     obstacle_status ret = IRremote_Handler();
      if (NOT_FOUND != ret)
      {
-          //Serial.println("esp wake up");
           Reader_WakeUp();
           if (false != READER_handler())
           {
-          
           Serial.println("kart eslesti kapi acildi");
-          
-            status=false;
-            //ledYak();
           }
-     
           
      }
      else
      {
           //Serial.println("esp sleep mode");
           Reader_Sleep();
-          ESP.deepSleep(10000000); //sleep for 2second
+          //ESP.deepSleep(100000); //sleep for 2second
      }
 }

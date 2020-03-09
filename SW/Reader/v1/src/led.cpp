@@ -3,8 +3,8 @@
 #include <Timer.h>
 #include <led.h>
 
-#define LED_GREEN 0
-#define LED_RED   2
+#define LED_GREEN  15   //D3 GPIOA   0 
+#define LED_RED   A0    //D4 GPIOA2   2 
 #define LED_DURATION 2
 
 typedef enum
@@ -152,6 +152,8 @@ void LED_Handler()
         {
             led_sys->timeout = false; 
             led_sys->timer_id = led_sys->timer.after(LED_sequences[led_action].option[led_sys->index].duration, LED_TimerCallback);     //2saniye çalışacak
+            Serial.print("Timer id: ");
+            Serial.print(led_sys->timer_id);
             if(0 <= led_sys->timer_id)
             {
                 led_state = LED_STATE_WAIT;
@@ -165,6 +167,7 @@ void LED_Handler()
 
     case LED_STATE_WAIT:
         led_sys->timer.update();
+        Serial.println("timer kuruldu");
         if(false != led_sys->timeout)
         {
             led_sys->timer.stop(led_sys->timer_id);
@@ -176,6 +179,7 @@ void LED_Handler()
             break;
         }
       case LED_STATE_CHECK:
+        Serial.println("led state check");
         if(led_sys->index < LED_sequences[led_action].size)
         {
             led_sys->index++;
@@ -184,6 +188,7 @@ void LED_Handler()
         }
         else
         {
+             Serial.println("gorev bitti");
             free(led_sys);
             led_sys = NULL;
         }

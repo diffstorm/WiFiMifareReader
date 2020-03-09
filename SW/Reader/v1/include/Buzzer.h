@@ -4,7 +4,7 @@ void BZR_Init();
 
 typedef enum 
 {
-    NONE = 0,
+    BZR_NONE = 0,
     BZR_ACCESS_CONFIRMED,
     BZR_ACCESS_DENIED,
     BZR_CARD_READ_ERROR,
@@ -19,3 +19,4 @@ void BZR_SetAction(BZR_Tone_t action);
 
 
 void BZR_Handler();
+
