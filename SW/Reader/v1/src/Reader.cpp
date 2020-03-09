@@ -1,5 +1,5 @@
 #include <Reader.h>
-
+#include <led.h>
 #define RST_PIN 5
 #define SS_PIN 4
 
@@ -10,6 +10,7 @@ byte blockAddres = 4;
 byte trailerBlock = 7;
 LinkedList<long> passwordList = LinkedList<long>();
 card_t card;
+
 
 void Reader_Prepare_Key()
 {
@@ -55,7 +56,6 @@ bool Reader_IsMifare()
 
 bool Reader_ReadBlock()
 {
-
     MFRC522::StatusCode status;
     byte buffer[18];
     byte bufferSize = sizeof(buffer);
@@ -63,7 +63,6 @@ bool Reader_ReadBlock()
 
     if (mfrc522.PICC_IsNewCardPresent())
     {
-
         if (mfrc522.PICC_ReadCardSerial())
         {
             if (mfrc522.uid.size > 0)
@@ -84,6 +83,7 @@ bool Reader_ReadBlock()
                         Serial.print("kart ici sifre= ");
                         Serial.println(card.password);
                         ret = true;
+                        
                     }
                 }
             }
@@ -107,7 +107,7 @@ bool Reader_ComparePassword()
             passwordList.remove(i);
             ret = true;
             break;
-        }
+        }  
     }
     return ret;
 }
@@ -129,8 +129,16 @@ bool READER_handler()
         if (0 != Reader_ComparePassword())
         {
             ret = true;
+            LED_SetAction(LED_ACTION_ACCESS_CONFIRMED);
+        }
+        else
+        {
+            LED_SetAction(LED_ACTION_ACCESS_DENIED);
         }
     }
-
+    else
+    {
+        LED_SetAction(LED_ACTION_CARD_READ_ERROR);
+    }
     return ret;
 }

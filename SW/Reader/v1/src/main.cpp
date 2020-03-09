@@ -4,6 +4,18 @@
 #include <IRremotes.h>
 #include <Reader.h>
 #include <ESPControl.h>
+#include <led.h>
+
+int *ptr1;
+int *ptr2;
+int x =5 ;
+
+int* str[] = 
+{
+  ptr1,
+  ptr2,
+};
+
 bool ret=false;
 void setup() {
   Serial.begin(115200);       
