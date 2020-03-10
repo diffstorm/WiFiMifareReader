@@ -1,8 +1,7 @@
 
 #include <malloc.h>
-#include <Timer.h>
-#include <Ticker.h>
 #include "Buzzer.h"
+#include "SysTick.h"
 #define buzzerPin 15
 
 const int c = 261;
@@ -51,9 +50,7 @@ typedef struct
 
 typedef struct
 {
-    //Timer timer;
     uint16_t current_time;
-    uint16_t prev_time;
     int8_t timer_id;
     uint8_t index;
     bool timeout;
@@ -159,13 +156,9 @@ void BZR_SetAction(BZR_Tone_t BZR_tone)
     BZR_State=BZR_STATE_IDLE;
     if(NULL != BZR_sys)
     {
-        if(0 <= BZR_sys->timer_id)
-        {
-            //BZR_sys->timer.stop(BZR_sys->timer_id);
-            //BZR_sys->timer_id = -1;
-        }
-        //free(BZR_sys);
-        //BZR_sys = NULL;
+        BZR_sys -> current_time = 0;
+        free(BZR_sys);
+        BZR_sys = NULL;
     }
 }
 
@@ -220,19 +213,12 @@ void BZR_Handler()
         if(0 < Tones[BZR_action].tone[BZR_sys->index].duration)
         {
             BZR_sys->timeout=false;
-            //BZR_sys->timer_id = BZR_sys->timer.after((Tones[BZR_action].tone[BZR_sys->index].duration), BZR_TimerCallback);
-
-            BZR_sys->current_time = millis();
-            if((Tones[BZR_action].tone[BZR_sys->index].duration) < BZR_sys ->current_time )
+            BZR_sys->current_time = SysTick_getTime();
+            if(false != SysTick_checkTime((Tones[BZR_action].tone[BZR_sys->index].duration),BZR_sys->current_time))
             {
                 BZR_sys->timeout = true;
                 BZR_sys->current_time = 0;
             }
-
-            /*if(0 <= BZR_sys->timer_id)
-            {
-                BZR_State=BZR_STATE_WAIT;
-            } */
             BZR_State=BZR_STATE_WAIT;
         }
         else
@@ -241,12 +227,8 @@ void BZR_Handler()
             break;
         }
     case BZR_STATE_WAIT:
-        //BZR_sys->timer.update();
         if (false != BZR_sys->timeout)
         {
-           // BZR_sys->timer.stop(BZR_sys->timer_id);
-            Serial.println("timer durdu");
-            //BZR_sys->timer_id=-1;
             BZR_State=BZR_STATE_CHECK;
         }
         else

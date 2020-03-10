@@ -17,6 +17,5 @@ void BZR_init();
 
 void BZR_SetAction(BZR_Tone_t action);
 
-
 void BZR_Handler();
 

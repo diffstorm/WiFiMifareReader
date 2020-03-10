@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <malloc.h>
-#include <Timer.h>
 #include <led.h>
+#include "SysTick.h"
 
 #define LED_GREEN  15   //D3 GPIOA   0 
 #define LED_RED   A0    //D4 GPIOA2   2 
@@ -30,8 +30,8 @@ typedef struct
 
 typedef struct
 {
-    Timer timer;
-    int8_t timer_id;
+    uint16_t current_time;
+    uint8_t timer_id;
     uint8_t index;
     bool timeout;
 } LED_sys_t;
@@ -105,11 +105,7 @@ void LED_SetAction(LED_action_t action)
     led_state = LED_STATE_IDLE;
     if(NULL != led_sys)
     {
-        if(0 <= led_sys->timer_id)
-        {
-            led_sys->timer.stop(led_sys->timer_id);
-            led_sys->timer_id = -1;
-        }
+        led_sys->current_time = 0;
         free(led_sys);
         led_sys = NULL;
     }
@@ -151,13 +147,13 @@ void LED_Handler()
         if(0 < LED_sequences[led_action].option[led_sys->index].duration)
         {
             led_sys->timeout = false; 
-            led_sys->timer_id = led_sys->timer.after(LED_sequences[led_action].option[led_sys->index].duration, LED_TimerCallback);     //2saniye çalışacak
-            Serial.print("Timer id: ");
-            Serial.print(led_sys->timer_id);
-            if(0 <= led_sys->timer_id)
+            led_sys->current_time = SysTick_getTime();
+            if(false != SysTick_checkTime(LED_sequences[led_action].option[led_sys->index].duration,led_sys->current_time))
             {
-                led_state = LED_STATE_WAIT;
+                led_sys -> timeout =true;
+                led_sys ->current_time = 0;
             }
+                led_state = LED_STATE_WAIT;
         }
         else
         {
@@ -166,12 +162,8 @@ void LED_Handler()
         }
 
     case LED_STATE_WAIT:
-        led_sys->timer.update();
-        Serial.println("timer kuruldu");
         if(false != led_sys->timeout)
         {
-            led_sys->timer.stop(led_sys->timer_id);
-            led_sys->timer_id = -1;
             led_state = LED_STATE_CHECK;
         }
         else
@@ -198,3 +190,4 @@ void LED_Handler()
         break;
     }
 }
+
