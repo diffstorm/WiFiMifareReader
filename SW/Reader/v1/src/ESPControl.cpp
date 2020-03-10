@@ -25,7 +25,6 @@ void ESP_Handler()
      }
      else
      {
-          //Serial.println("esp sleep mode");
           Reader_Sleep();
           //ESP.deepSleep(100000); //sleep for 2second
      }

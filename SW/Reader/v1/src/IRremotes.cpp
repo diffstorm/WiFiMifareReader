@@ -19,10 +19,10 @@ obstacle_status IRremote_Handler()
     delay(80);
     if (irrecv.decode(&results))
     {
-        //serialPrintUint64(results.value,HEX);
+        // //SerialPrintUint64(results.value,HEX);
         if (results.value == 0x8804F47)
         {
-            //Serial.println("obstacle is found");
+            // //Serial.println("obstacle is found");
             ret=FOUND;
         }
     }

@@ -1,6 +1,6 @@
 #include <Reader.h>
-#include<Buzzer.h>
-//#include <led.h>
+#include <Buzzer.h>
+#include <led.h>
 #define RST_PIN 5
 #define SS_PIN 4
 //BZR_Tone_t t;
@@ -29,13 +29,13 @@ void Reader_Init()
 
 void Reader_Sleep()
 {
-    //Serial.println("reader sleep");
+    // //Serial.println("reader sleep");
     digitalWrite(RST_PIN, LOW);
 }
 
 void Reader_WakeUp()
 {
-    //Serial.println("reader wakeup");
+    // //Serial.println("reader wakeup");
     digitalWrite(RST_PIN, HIGH);
 }
 
@@ -45,7 +45,7 @@ bool Reader_IsMifare()
     MFRC522::PICC_Type piccType = mfrc522.PICC_GetType(mfrc522.uid.sak);
     if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI && piccType != MFRC522::PICC_TYPE_MIFARE_1K && piccType != MFRC522::PICC_TYPE_MIFARE_4K)
     {
-        //Serial.println(F("Not a Mifare Card."));
+        // //Serial.println(F("Not a Mifare Card."));
         ret = false;
     }
     else
@@ -73,17 +73,17 @@ READER_status_t Reader_ReadBlock()
                 status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, trailerBlock, &key, &(mfrc522.uid));
                 if (status == MFRC522::STATUS_OK)
                 {
-                    Serial.println("authentication successfull");
+                     //Serial.println("authentication successfull");
                     status = mfrc522.MIFARE_Read(blockAddres, buffer, &bufferSize);
                     if (status == MFRC522::STATUS_OK)
                     {
-                        Serial.println("Read successfull");
+                         //Serial.println("Read successfull");
                         card.password = ((long)buffer[0] << 24) & (0xFFFFFFFF);
                         card.password |= ((long)buffer[1] << 16) & (0xFFFFFF);
                         card.password |= ((long)buffer[2] << 8) & (0xFFFF);
                         card.password |= ((long)buffer[3]) & (0xFF);
-                        Serial.print("kart ici sifre= ");
-                        Serial.println(card.password);
+                         //Serial.print("kart ici sifre= ");
+                         //Serial.println(card.password);
                         ret = READ_OK;
                     }
                 }
@@ -107,14 +107,9 @@ bool Reader_ComparePassword()
     {
         if (card.password == passwordList.get(i))
         {
-            passwordList.remove(i);
             ret = true;
-            break;
         }
-        else
-        {
-            break;
-        }
+        break;
     }
     return ret;
 }
@@ -129,28 +124,26 @@ void READER_stop()
 bool READER_handler()
 {
     bool ret = false;
-    //BZR_SetAction(BZR_NONE);
-    //LED_SetAction(LED_ACTION_IDLE);
     Reader_Fill_List();
     if (READ_OK == Reader_ReadBlock())
     {
-        Serial.println("kart okunuyor!!!");
+         // //Serial.println("kart okunuyor!!!");
         READER_stop();
         if (0 != Reader_ComparePassword())
         {
             ret = true;
-            //LED_SetAction(LED_ACTION_ACCESS_CONFIRMED);
-            BZR_SetAction(BZR_ACCESS_CONFIRMED);
+            LED_SetAction(LED_ACTION_ACCESS_CONFIRMED);
+            BZR_SetAction(BZR_ACTION_ACCESS_CONFIRMED);
         }
         else
-        {   //LED_SetAction(LED_ACTION_ACCESS_DENIED);
-            BZR_SetAction(BZR_ACCESS_DENIED);
+        {   
+            LED_SetAction(LED_ACTION_ACCESS_DENIED);
+            BZR_SetAction(BZR_ACTION_ACCESS_DENIED);
         }
     }
     else
     {
-        //BZR_SetAction(BZR_NONE);
-        //LED_SetAction(LED_ACTION_IDLE);
+         
     }
     return ret;
 }

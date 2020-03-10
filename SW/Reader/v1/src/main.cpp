@@ -1,12 +1,10 @@
 #include <Arduino.h>
-#include <MFRC522.h>
-#include <IRremoteESP8266.h>
 #include <IRremotes.h>
 #include <Reader.h>
 #include <ESPControl.h>
-#include<Buzzer.h>
-//#include <led.h>
-bool ret=false;
+#include <Buzzer.h>
+#include <led.h>
+
 void setup() {
   Serial.begin(115200);       
   pinMode(15,OUTPUT);
@@ -14,9 +12,7 @@ void setup() {
   IRremote_Init();
   //LED_init();
   BZR_Init();
-  
-  
-   Serial.println("setup init");
+   //Serial.println("setup init");
 }
 
 void loop() {

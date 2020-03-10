@@ -3,9 +3,9 @@
 #include <led.h>
 #include "SysTick.h"
 
-#define LED_GREEN  15   //D3 GPIOA   0 
-#define LED_RED   A0    //D4 GPIOA2   2 
-#define LED_DURATION 2
+#define LED_GREEN  1   //TX
+#define LED_RED   3    //RX
+#define LED_DURATION 1000
 
 typedef enum
 {
@@ -30,10 +30,8 @@ typedef struct
 
 typedef struct
 {
-    uint16_t current_time;
-    uint8_t timer_id;
+    uint32_t t0;
     uint8_t index;
-    bool timeout;
 } LED_sys_t;
 
 // Global variables
@@ -51,19 +49,23 @@ LED_option_t LED_IDLE[] =
 LED_option_t LED_ACCESS_CONFIRMED[] = 
 {
     {LED_GREEN,HIGH,LED_DURATION},
-    {LED_GREEN,LOW,0}
+    {LED_GREEN,LOW,LED_DURATION},
 }; 
 
 LED_option_t LED_ACCESS_DENIED[] = 
 {
     {LED_RED,HIGH,LED_DURATION},
-    {LED_RED,LOW,0}
+    {LED_RED,LOW,LED_DURATION},
+     {LED_RED,HIGH,LED_DURATION},
+    {LED_RED,LOW,LED_DURATION},
+     {LED_RED,HIGH,LED_DURATION},
+    {LED_RED,LOW,LED_DURATION},
 };
 
 LED_option_t LED_CARD_READ_ERROR[] = 
 {
     {LED_RED,HIGH,LED_DURATION},
-    {LED_RED,LOW,0}
+    {LED_RED,LOW,LED_DURATION}
 };
 
 LED_option_t LED_CONNECTION_ERROR[] = 
@@ -88,12 +90,17 @@ const LED_sequence_t LED_sequences[] =
     {LED_REMOVE_CARD_ERROR, sizeof(LED_REMOVE_CARD_ERROR) / sizeof(LED_option_t)}
 };
 
+void LED_Disable()
+{
+    digitalWrite(LED_RED,LOW);
+    digitalWrite(LED_GREEN,LOW);
+}
+
 void LED_init()
 {
     pinMode(LED_RED,OUTPUT);
     pinMode(LED_GREEN,OUTPUT);
-    digitalWrite(LED_RED,LOW);
-    digitalWrite(LED_GREEN,LOW);
+    LED_Disable();
     led_state = LED_STATE_IDLE;
     led_action = LED_ACTION_IDLE;
     led_sys = NULL;
@@ -105,16 +112,8 @@ void LED_SetAction(LED_action_t action)
     led_state = LED_STATE_IDLE;
     if(NULL != led_sys)
     {
-        led_sys->current_time = 0;
         free(led_sys);
         led_sys = NULL;
-    }
-}
-void LED_TimerCallback()
-{
-    if(NULL != led_sys)
-    {
-        led_sys->timeout = true;
     }
 }
 
@@ -133,7 +132,7 @@ void LED_Handler()
             led_sys = (LED_sys_t*)malloc(sizeof(LED_sys_t));
             if(NULL != led_sys)
             {
-                led_sys->index = 0;                     //görev sırası
+                led_sys->index = 0;
                 led_state = LED_STATE_PERFORM;          
             }
         }
@@ -143,17 +142,16 @@ void LED_Handler()
         }
   
     case LED_STATE_PERFORM:
+        Serial.print("led pin: ");
+        Serial.println(LED_sequences[led_action].option[led_sys->index].pin);
+        Serial.print("led pol: ");
+        Serial.println(LED_sequences[led_action].option[led_sys->index].polarity);
+
         LED_SetPin(LED_sequences[led_action].option[led_sys->index].pin, LED_sequences[led_action].option[led_sys->index].polarity);
         if(0 < LED_sequences[led_action].option[led_sys->index].duration)
         {
-            led_sys->timeout = false; 
-            led_sys->current_time = SysTick_getTime();
-            if(false != SysTick_checkTime(LED_sequences[led_action].option[led_sys->index].duration,led_sys->current_time))
-            {
-                led_sys -> timeout =true;
-                led_sys ->current_time = 0;
-            }
-                led_state = LED_STATE_WAIT;
+            led_sys->t0 = SysTick_get();
+            led_state = LED_STATE_WAIT;
         }
         else
         {
@@ -162,7 +160,7 @@ void LED_Handler()
         }
 
     case LED_STATE_WAIT:
-        if(false != led_sys->timeout)
+        if(SysTick_elapsed(led_sys->t0) >= LED_sequences[led_action].option[led_sys->index].duration)
         {
             led_state = LED_STATE_CHECK;
         }
@@ -170,24 +168,29 @@ void LED_Handler()
         {
             break;
         }
+
       case LED_STATE_CHECK:
-        Serial.println("led state check");
         if(led_sys->index < LED_sequences[led_action].size)
         {
+            Serial.print("led index: ");
+            Serial.println(led_sys->index);
+
             led_sys->index++;
             led_state = LED_STATE_PERFORM;
             break;
         }
         else
         {
-             Serial.println("gorev bitti");
             free(led_sys);
             led_sys = NULL;
+            LED_Disable();
+
+            Serial.println("led done");
         }
+        
     default:
         led_state = LED_STATE_IDLE;
         led_action = LED_ACTION_IDLE;
         break;
     }
 }
-

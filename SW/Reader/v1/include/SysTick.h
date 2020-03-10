@@ -2,7 +2,8 @@
 #define SysTick_h
 #include <stdint.h>
 
-unsigned long SysTick_getTime();
-bool SysTick_checkTime(uint16_t time1,uint16_t time2);
+uint32_t SysTick_elapsed(uint32_t t0);
+
+uint32_t SysTick_get();
 
 #endif

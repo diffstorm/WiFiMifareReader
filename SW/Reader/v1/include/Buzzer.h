@@ -1,21 +1,18 @@
 #include<Arduino.h>
 
-void BZR_Init();
-
 typedef enum 
 {
-    BZR_NONE = 0,
-    BZR_ACCESS_CONFIRMED,
-    BZR_ACCESS_DENIED,
-    BZR_CARD_READ_ERROR,
-    BZR_CONNECTION_ERROR,
-    BZR_REMOVE_CARD_ERROR
-} BZR_Tone_t;
+    BZR_ACTION_IDLE = 0,
+    BZR_ACTION_ACCESS_CONFIRMED,
+    BZR_ACTION_ACCESS_DENIED,
+    BZR_ACTION_CARD_READ_ERROR,
+    BZR_ACTION_CONNECTION_ERROR,
+    BZR_ACTION_REMOVE_CARD_ERROR
+} BZR_action_t;
 
+void BZR_Init();
 
-void BZR_init();
-
-void BZR_SetAction(BZR_Tone_t action);
+void BZR_SetAction(BZR_action_t action);
 
 void BZR_Handler();
 
