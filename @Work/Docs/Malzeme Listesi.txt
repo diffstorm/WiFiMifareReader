@@ -1,0 +1,13 @@
+Kart Okuyucu Malzeme Listesi
+******************************
+1-) 3mm Green LED
+2-) 3mm RED   LED
+3-) TSOP382 IR RECEIVER LED
+4-) 3mm IR Transmitter LED
+5-) MFRC522 module
+6-) Diyot : SMD 4148
+7-) 3V 12mm 2300+300Hz H:9,5MM Devreli Buzzer
+8-) Klemens
+9-) BC238 NPN Transistör 2 adet - 0.1A 20V
+10-)Duvar tipi kart okuyucu kutusu 1 adet	(Boy min > 6cm , En min > 4cm )
+11-)
