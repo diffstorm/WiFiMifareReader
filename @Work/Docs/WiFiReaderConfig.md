@@ -29,6 +29,8 @@ Wifi Reader config
 ## Kapida role var mi?
 - ismi? - listeden sec
 5 roleye kadar eklenebilsin
+- [x] rölelerle ağ üzerinden haberleş
+- [ ] rölelerle direkt haberleş (düşük güç modunda önerilir)
 
 ## Giris restrictions?
 - Aktif saat araligi  (9-18)
