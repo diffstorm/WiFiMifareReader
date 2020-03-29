@@ -37,6 +37,8 @@ Wifi Reader config
 - Aktif saat araligi  (9-18)
 - Aktif haftanin gunu
 Bu saatlerde yonetici karti haric kapiyi acmaz!
+- [ ] Ziyaretçi kartı geçiş yapabilsin mi?
+- [x] Bekçi kartı geçiş yapabilsin mi?
 
 ## Loglama yapilsin mi?
 - İletme zamanı :
