@@ -15,7 +15,7 @@ card_t card;
 
 void Reader_Prepare_Key()
 {
-    for (byte i = 0; i < 6; i++)
+    for(byte i = 0; i < 6; i++)
     {
         key.keyByte[i] = 0xFF;
     }
@@ -43,7 +43,7 @@ bool Reader_IsMifare()
 {
     bool ret = false;
     MFRC522::PICC_Type piccType = mfrc522.PICC_GetType(mfrc522.uid.sak);
-    if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI && piccType != MFRC522::PICC_TYPE_MIFARE_1K && piccType != MFRC522::PICC_TYPE_MIFARE_4K)
+    if(piccType != MFRC522::PICC_TYPE_MIFARE_MINI && piccType != MFRC522::PICC_TYPE_MIFARE_1K && piccType != MFRC522::PICC_TYPE_MIFARE_4K)
     {
         // //Serial.println(F("Not a Mifare Card."));
         ret = false;
@@ -63,27 +63,27 @@ READER_status_t Reader_ReadBlock()
     byte bufferSize = sizeof(buffer);
     READER_status_t ret = NOTFOUND;
 
-    if (mfrc522.PICC_IsNewCardPresent())
+    if(mfrc522.PICC_IsNewCardPresent())
     {
-        if (mfrc522.PICC_ReadCardSerial())
+        if(mfrc522.PICC_ReadCardSerial())
         {
-            if (mfrc522.uid.size > 0)
+            if(mfrc522.uid.size > 0)
             {
                 status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, trailerBlock, &key, &(mfrc522.uid));
                 status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, trailerBlock, &key, &(mfrc522.uid));
-                if (status == MFRC522::STATUS_OK)
+                if(status == MFRC522::STATUS_OK)
                 {
-                     //Serial.println("authentication successfull");
+                    //Serial.println("authentication successfull");
                     status = mfrc522.MIFARE_Read(blockAddres, buffer, &bufferSize);
-                    if (status == MFRC522::STATUS_OK)
+                    if(status == MFRC522::STATUS_OK)
                     {
-                         //Serial.println("Read successfull");
+                        //Serial.println("Read successfull");
                         card.password = ((long)buffer[0] << 24) & (0xFFFFFFFF);
                         card.password |= ((long)buffer[1] << 16) & (0xFFFFFF);
                         card.password |= ((long)buffer[2] << 8) & (0xFFFF);
                         card.password |= ((long)buffer[3]) & (0xFF);
-                         //Serial.print("kart ici sifre= ");
-                         //Serial.println(card.password);
+                        //Serial.print("kart ici sifre= ");
+                        //Serial.println(card.password);
                         ret = READ_OK;
                     }
                 }
@@ -103,9 +103,9 @@ void Reader_Fill_List()
 bool Reader_ComparePassword()
 {
     bool ret = false;
-    for (int i = 0; i < passwordList.size(); i++)
+    for(int i = 0; i < passwordList.size(); i++)
     {
-        if (card.password == passwordList.get(i))
+        if(card.password == passwordList.get(i))
         {
             ret = true;
         }
@@ -125,25 +125,25 @@ bool READER_handler()
 {
     bool ret = false;
     Reader_Fill_List();
-    if (READ_OK == Reader_ReadBlock())
+    if(READ_OK == Reader_ReadBlock())
     {
-         // //Serial.println("kart okunuyor!!!");
+        // //Serial.println("kart okunuyor!!!");
         READER_stop();
-        if (0 != Reader_ComparePassword())
+        if(0 != Reader_ComparePassword())
         {
             ret = true;
             LED_SetAction(LED_ACTION_ACCESS_CONFIRMED);
             BZR_SetAction(BZR_ACTION_ACCESS_CONFIRMED);
         }
         else
-        {   
+        {
             LED_SetAction(LED_ACTION_ACCESS_DENIED);
             BZR_SetAction(BZR_ACTION_ACCESS_DENIED);
         }
     }
     else
     {
-         
+
     }
     return ret;
 }

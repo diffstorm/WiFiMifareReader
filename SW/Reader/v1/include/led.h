@@ -1,7 +1,7 @@
 #ifndef LED_H
 #define LED_H
 
-typedef enum 
+typedef enum
 {
     LED_ACTION_IDLE = 0,
     LED_ACTION_ACCESS_CONFIRMED,
@@ -9,7 +9,7 @@ typedef enum
     LED_ACTION_CARD_READ_ERROR,
     LED_ACTION_CONNECTION_ERROR,
     LED_ACTION_REMOVE_CARD_ERROR
-}LED_action_t;
+} LED_action_t;
 
 void LED_init();
 

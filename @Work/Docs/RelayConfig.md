@@ -1,9 +1,9 @@
-Wifi Reader config
+WiFi Relay Config 
 ===========================================
 
 ## Cihaza ait sabit bilgiler görüntülenir
 - Unique Device ID
-- Versiyon 
+- Versiyon
 
 ## Kullanici bilgileri
 - Firma ismi
@@ -12,9 +12,6 @@ Wifi Reader config
 - Cihaz aciklama
 - Sistem Şifresi (tum cihazlarda aynı olmalı)
 - Login usr:pwd [sor/sorma]
-
-## Geçiş tipi?
-- Giriş/Çıkış
 
 ## Internet wifi
 - ssid, password - listeden sec?
@@ -27,18 +24,15 @@ Wifi Reader config
 - AP acik/kapali
 - mDNS name (http://name.local)
 
-## Kapida role var mi?
-- ismi? - listeden sec
-5 roleye kadar eklenebilsin
-- [x] rölelerle ağ üzerinden haberleş
-- [ ] rölelerle direkt haberleş (düşük güç modunda önerilir)
+## WiFi Reader ile haberleşme yöntemi
+- [x] wifi readerlarla ağ üzerinden haberleş
+- [ ] wifi readerlarla direkt haberleş (reader düşük güç modunda önerilir)
 
-## Giris restrictions?
-- Aktif saat araligi  (9-18)
-- Aktif haftanin gunu
-Bu saatlerde yonetici karti haric kapiyi acmaz!
+## RF Reader dan komut dinle
+- [ ] Açık/kapalı
 
 ## Loglama yapilsin mi?
+Loglama sadece kapı açılması ve tarihi şeklinde yapılır.
 - İletme zamanı :
   - [x] Belirli saatlerde ilet
     - Loglama saatleri (5 adet)
@@ -52,17 +46,6 @@ Bu saatlerde yonetici karti haric kapiyi acmaz!
   - tcp ip address port
   - kendi ucretli platformumuz
     - user, pwd yada token
-- [x] Yetkisiz girisler loglansin mi?
-- [ ] Yeni kart tanimlamalari loglansin mi?
-- [ ] Kart silmeleri loglansin mi?
-- [ ] Engellemeler loglansin mi?
-- [ ] Config admin islemleri loglansin mi?
-
-## Dusuk guc modu aktif mi?
-- 5 farkli saat araligi icin kart tarama periyodu
-  - [ ] Hepsi icin acik kapali checkbox
-  - Saatler birbirlerini overlap yapamasin
-- [x] Uyandirma butonu yada karti aktif
 
 ## Yazilim guncellemeleri?
 - [x] Otomatik al

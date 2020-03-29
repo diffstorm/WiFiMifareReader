@@ -1,35 +1,35 @@
-CardUserConfig - _veriler sistem sifresiyle sifrelenir_
+CardUserConfig
 ===========================================
+### _veriler sistem sifresiyle sifrelenir_
 
-## Degismeyen kisim?
+## Info
 - Card hw unique id
-- Kayit tarihi
+- Versiyon
 - Kart tipi
   - islevsiz
+  - ziyaretci
+  - bekci
   - kullanici
   - yonetici
   - uyandirma karti
-  - resetleme karti
-  - whitelist kopyalama karti
-  - whitelist temizleme karti
-  
+
+## Degismeyen kisim?
+- Kayit tarihi
 - Isim soyisim
 - ID no
 - Mail adres
+- Firma
 - Departman
-
-## Degisen kisim?
-- Son okunma tarihi
-- Toplam okunma sayisi
 
 ## Restrictions?
 - Aktif saat araligi (9 - 18)
 - Aktif haftanin gunleri
 
+## Degisen kisim?
+- Son okunma tarihi
+- Toplam okunma sayisi
+
 ## Hash?
 - Degismeyen hash
 - Degisen hash
 - Restrictions hash
-
-## Whitelist data[hash, hash, ...]
-- Whitelist data hash
