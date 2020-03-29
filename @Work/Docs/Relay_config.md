@@ -1,10 +1,10 @@
 ### Relay Config 
 -------------
-####Cihaza ait sabit bilgiler
+##Cihaza ait sabit bilgiler
 -------------
 - Unique Device ID görüntülenecek
 - Versiyon 
-####Kullanıcı bilgileri
+##Kullanıcı bilgileri
 -------------
 - Firma ismi
 - Departman ismi
@@ -13,30 +13,30 @@
 - Sistem Şifresi (auto üret)
 - Login usr:pwd [sor/sorma]
 
-####Cihaz çalışma modu
+##Cihaz çalışma modu
 -------------
 - Kartlı Geçiş Sistemi  
 - Termostatlı Sistem
   - Sensör sıcaklık eşik değeri? 
   - Sıcaklık Birimi(Celcius/Fahreneit?)
   
-####RF çalışma modu
+##RF çalışma modu
 -------------
 - Açık/kapalı
 
-####RF Haberleşme ??
+##RF Haberleşme ??
 -------------
 ??
 
-####Internet Wifi 
+##Internet Wifi 
 -------------
 - 3 adet Ssid, password - listeden sec?
 - anten gucu ayari
-####AP wifi
+##AP wifi
 -------------
 - Ssid, password
 
-####Wifi calisma modu
+##Wifi calisma modu
 -------------
 - AP acik/kapali
 - mDNS name (http://name.local)
