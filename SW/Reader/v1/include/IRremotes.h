@@ -2,14 +2,13 @@
 #include <IRrecv.h>
 #include <IRsend.h>
 #include <IRutils.h>
-#define IRSend_led  0
+#define IRSend_led  0 
 #define IRRecv_led  2
 
-typedef enum
-{
+typedef enum{
     FOUND,
     NOT_FOUND
-} obstacle_status;
+}obstacle_status;
 
 void IRremote_Init();
 obstacle_status IRremote_Handler();

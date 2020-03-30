@@ -1,6 +1,6 @@
 #include<Arduino.h>
 
-typedef enum
+typedef enum 
 {
     BZR_ACTION_IDLE = 0,
     BZR_ACTION_ACCESS_CONFIRMED,
@@ -15,4 +15,3 @@ void BZR_Init();
 void BZR_SetAction(BZR_action_t action);
 
 void BZR_Handler();
-
