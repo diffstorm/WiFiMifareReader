@@ -41,11 +41,8 @@ Loglama sadece kapı açılması ve tarihi şeklinde yapılır.
 - Loglama metodu :
   - mail
   - rest api (GET)
-  - database insert
-    - ip/addr, user, pwd
-  - tcp ip address port
-  - kendi ucretli platformumuz
-    - user, pwd yada token
+  - udp - address port
+  - kendi ucretli platformumuz - token
 
 ## Yazilim guncellemeleri?
 - [x] Otomatik al
