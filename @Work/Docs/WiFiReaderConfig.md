@@ -65,6 +65,7 @@ Bu saatlerde yonetici karti haric kapiyi acmaz!
   - [ ] Hepsi icin acik kapali checkbox
   - Saatler birbirlerini overlap yapamasin
 - [x] Uyandirma butonu yada karti aktif
+- [ ] IR aktif
 
 ## Yazilim guncellemeleri?
 - [x] Otomatik al
