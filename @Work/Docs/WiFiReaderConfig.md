@@ -49,11 +49,8 @@ Bu saatlerde yonetici karti haric kapiyi acmaz!
 - Loglama metodu :
   - mail
   - rest api (GET)
-  - database insert
-    - ip/addr, user, pwd
-  - tcp ip address port
-  - kendi ucretli platformumuz
-    - user, pwd yada token
+  - udp - address port
+  - kendi ucretli platformumuz - token
 - [x] Yetkisiz girisler loglansin mi?
 - [ ] Yeni kart tanimlamalari loglansin mi?
 - [ ] Kart silmeleri loglansin mi?
