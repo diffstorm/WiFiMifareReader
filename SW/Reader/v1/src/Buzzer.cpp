@@ -221,7 +221,7 @@ BZR_sequence_t Tones[] =   // TODO Obstacle detacted for long time
 
 void BZR_Disable()
 {
-    
+
     os_intr_lock();
     analogWrite(buzzerPin, 0);
     pinMode(buzzerPin, OUTPUT);
@@ -232,9 +232,9 @@ void BZR_Disable()
 
 void BZR_Set_frequency(uint16_t frequency)
 {
-    
-    if(0==frequency)
-    {   
+
+    if(0 == frequency)
+    {
         BZR_Disable();
     }
     else
@@ -260,7 +260,7 @@ void BZR_SetAction(BZR_action_t action)
 {
     BZR_action = action;
     BZR_state = BZR_STATE_IDLE;
-    if (NULL != BZR_sys)
+    if(NULL != BZR_sys)
     {
         free(BZR_sys);
         BZR_sys = NULL;
@@ -269,73 +269,73 @@ void BZR_SetAction(BZR_action_t action)
 
 void BZR_Handler()
 {
-    switch (BZR_state)
+    switch(BZR_state)
     {
-    case BZR_STATE_IDLE:
-        if (BZR_ACTION_IDLE != BZR_action)
-        {
-            BZR_sys = (BZR_sys_t *)malloc(sizeof(BZR_sys_t));
-            if (NULL != BZR_sys)
+        case BZR_STATE_IDLE:
+            if(BZR_ACTION_IDLE != BZR_action)
             {
-                BZR_sys->index = 0;
-                BZR_state = BZR_STATE_PERFORM;
+                BZR_sys = (BZR_sys_t *)malloc(sizeof(BZR_sys_t));
+                if(NULL != BZR_sys)
+                {
+                    BZR_sys->index = 0;
+                    BZR_state = BZR_STATE_PERFORM;
+                }
             }
-        }
-        else
-        {
+            else
+            {
+                break;
+            }
+
+        case BZR_STATE_PERFORM:
+            //Serial.print("Nota freq: ");
+            //Serial.println(Tones[BZR_action].tone[BZR_sys->index].frequency);
+            //BZR_Disable();
+            delay(10);
+            BZR_Set_frequency(Tones[BZR_action].tone[BZR_sys->index].frequency);
+            if(0 < Tones[BZR_action].tone[BZR_sys->index].duration)
+            {
+                BZR_sys->t0 = SysTick_get();
+                BZR_state = BZR_STATE_WAIT;
+            }
+            else
+            {
+                BZR_state = BZR_STATE_CHECK;
+                break;
+            }
+
+        case BZR_STATE_WAIT:
+            if(SysTick_elapsed(BZR_sys->t0) >= Tones[BZR_action].tone[BZR_sys->index].duration)
+            {
+                BZR_state = BZR_STATE_CHECK;
+            }
+            else
+            {
+                break;
+            }
+
+        case BZR_STATE_CHECK:
+            if(BZR_sys->index < Tones[BZR_action].size - 1)
+            {
+                Serial.print("Nota index: ");
+                Serial.println(BZR_sys->index);
+
+                BZR_sys->index++;
+                BZR_state = BZR_STATE_PERFORM;
+
+                break;
+            }
+            else
+            {
+                free(BZR_sys);
+                BZR_sys = NULL;
+                BZR_Disable();
+
+                Serial.println("buzzer done");
+            }
+
+        default:
+            BZR_state = BZR_STATE_IDLE;
+            BZR_action = BZR_ACTION_IDLE;
             break;
-        }
-
-    case BZR_STATE_PERFORM:
-        //Serial.print("Nota freq: ");
-        //Serial.println(Tones[BZR_action].tone[BZR_sys->index].frequency);
-        //BZR_Disable();
-        delay(10);
-        BZR_Set_frequency(Tones[BZR_action].tone[BZR_sys->index].frequency);
-        if (0 < Tones[BZR_action].tone[BZR_sys->index].duration)
-        {
-            BZR_sys->t0 = SysTick_get();
-            BZR_state = BZR_STATE_WAIT;
-        }
-        else
-        {
-            BZR_state = BZR_STATE_CHECK;
-            break;
-        }
-
-    case BZR_STATE_WAIT:
-        if (SysTick_elapsed(BZR_sys->t0) >= Tones[BZR_action].tone[BZR_sys->index].duration)
-        {
-            BZR_state = BZR_STATE_CHECK;
-        }
-        else
-        {
-            break;
-        }
-
-    case BZR_STATE_CHECK:
-        if (BZR_sys->index < Tones[BZR_action].size -1)
-        {
-            Serial.print("Nota index: ");
-            Serial.println(BZR_sys->index);
-
-            BZR_sys->index++; 
-            BZR_state = BZR_STATE_PERFORM;
-            
-            break;
-        }
-        else
-        {
-            free(BZR_sys);
-            BZR_sys = NULL;
-            BZR_Disable();
-
-            Serial.println("buzzer done");
-        }
-
-    default:
-        BZR_state = BZR_STATE_IDLE;
-        BZR_action = BZR_ACTION_IDLE;
-        break;
     }
 }

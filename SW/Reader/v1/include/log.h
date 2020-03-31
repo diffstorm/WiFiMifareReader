@@ -14,7 +14,7 @@
 #define __LOCATION " @ " __FILE__ " : " __S2(__LINE__)
 
 void DBG_LOG_Init(unsigned long baudrate);
-void DBG_LOG(const char * message, const char *func, const char *loc, int* i, float* f, double* d, char *hex, int hex_size);
+void DBG_LOG(const char *message, const char *func, const char *loc, int *i, float *f, double *d, char *hex, int hex_size);
 
 #define LOG_Init(x) DBG_LOG_Init(x)
 #define LOG(z)      DBG_LOG(z, (const char *)__func__, (const char *)__LOCATION, NULL, NULL, NULL, NULL, (int)0)
@@ -31,4 +31,4 @@ void DBG_LOG(const char * message, const char *func, const char *loc, int* i, fl
 #define LOGh(z,h)  ((void)0)
 #endif
 
-#endif 
+#endif

@@ -20,7 +20,8 @@ typedef struct __attribute__((packed))
 {
     u8 uid[10];
     u8 length;
-} UID_t;
+}
+UID_t;
 
 typedef struct __attribute__((packed))
 {
@@ -28,7 +29,8 @@ typedef struct __attribute__((packed))
     Version_t version;
     CardType_t type;
     DateTime_t record_date;
-} CardInfo_t;
+}
+CardInfo_t;
 
 typedef struct __attribute__((packed))
 {
@@ -38,21 +40,24 @@ typedef struct __attribute__((packed))
     char mail[CARD_CFG_NAME_LENGTH];
     char company[CARD_CFG_NAME_LENGTH];
     char department[CARD_CFG_NAME_LENGTH];
-} CardPersonal_t;
+}
+CardPersonal_t;
 
 typedef struct __attribute__((packed))
 {
     u8 hour_begin;
     u8 hour_end;
     DaysOfWeek_t dow;
-} CardRestrictions_t;
+}
+CardRestrictions_t;
 
 typedef struct __attribute__((packed))
 {
     CardInfo_t info;
     CardPersonal_t personal;
     CardRestrictions_t restrictions;
-} card_t;
+}
+card_t;
 
 typedef struct
 {

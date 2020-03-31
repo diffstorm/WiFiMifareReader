@@ -35,7 +35,8 @@ typedef struct __attribute__((packed))
     u8 thursday : 1;
     u8 friday : 1;
     u8 saturday : 1;
-} DaysOfWeek_t;
+}
+DaysOfWeek_t;
 
 typedef enum
 {

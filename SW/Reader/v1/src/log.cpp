@@ -7,7 +7,7 @@ void DBG_LOG_Init(unsigned long baudrate)
 }
 
 // Printout: message [int, float, double, hex] | <function_name> @ <file_name> : <line>
-void DBG_LOG(const char * message, const char *func, const char *loc, int* i, float* f, double* d, char *hex, int hex_size)
+void DBG_LOG(const char *message, const char *func, const char *loc, int *i, float *f, double *d, char *hex, int hex_size)
 {
     Serial.print(message);
     if(NULL != i)

@@ -5,23 +5,25 @@
 #include <Reader.h>
 #include <ESPControl.h>
 #include<Buzzer.h>
-bool ret=false;
-void setup() {
-  Serial.begin(115200);       
-  pinMode(15,OUTPUT);
-  Reader_Init();
-  IRremote_Init();
-  BZR_Init();
-  ESP.wdtDisable();
-  
-   Serial.println("setup init");
+bool ret = false;
+void setup()
+{
+    Serial.begin(115200);
+    pinMode(15, OUTPUT);
+    Reader_Init();
+    IRremote_Init();
+    BZR_Init();
+    ESP.wdtDisable();
+
+    Serial.println("setup init");
 }
 
-void loop() {
-  bool ret;
-  //Serial.println("TEST");
-  ESP_Handler();
+void loop()
+{
+    bool ret;
+    //Serial.println("TEST");
+    ESP_Handler();
 
-  BZR_Handler();
-  delay(100);
+    BZR_Handler();
+    delay(100);
 }
