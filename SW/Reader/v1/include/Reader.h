@@ -1,16 +1,4 @@
-#include <MFRC522.h>
-#include <SPI.h>
-#include<LinkedList.h>
-
-typedef struct {
-    byte uid[10];
-    uint8_t uidlen;
-}UID_t;
-
-typedef struct {
-    UID_t uid;
-    int32_t password;
-}card_t;
+#include "CardConfig.h"
 
 typedef enum{
 READ_OK,
