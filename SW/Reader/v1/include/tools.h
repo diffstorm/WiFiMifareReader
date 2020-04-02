@@ -1,6 +1,8 @@
 #ifndef __TOOLS_H__
 #define __TOOLS_H__
 
+#include "types.h"
+
 u8 esp_rand();
 
 u16 CRC16(u16 crc, unsigned char *i, unsigned int l);

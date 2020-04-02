@@ -1,8 +1,13 @@
 #ifndef __CARDCONFIG_H__
 #define __CARDCONFIG_H__
 
+#include "types.h"
+
 #define CARD_CFG_NAME_LENGTH 32
-#define CARD_MAX_SIZE        (16/*bytes*/ * 48/*sectors*/)
+#define CARD_ROW_SIZE        16 // # of bytes in a sector
+#define CARD_SECTOR_SIZE     48 // # of sectors in a card
+#define CARD_MAX_SIZE        (CARD_ROW_SIZE * CARD_SECTOR_SIZE)
+#define CARD_CHECKSUM_SEED   0xDEAD
 
 typedef enum
 {
@@ -63,6 +68,8 @@ typedef struct
 {
     u16 checksum;
     u16 length;
+    u16 random;
+    u16 bcc;
     u8 *data;
 } cardRaw_t;
 

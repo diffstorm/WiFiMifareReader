@@ -1,3 +1,4 @@
+#include "tools.h"
 
 //-----------------------------------------------------------------
 // HW True Random Number Generator of ESP8266

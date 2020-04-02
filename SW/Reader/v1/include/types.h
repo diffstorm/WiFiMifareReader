@@ -1,7 +1,17 @@
 #ifndef __TYPES_H__
 #define __TYPES_H__
 
-typedef enum // Device hardware model, look at DeviceConfig.h : DeviceModel definition
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+#include <malloc.h>
+#include "defs.h"
+
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+
+typedef enum // Device hardware model, look at defs.h : DeviceModel definition
 {
     mWiFiReader = 0,
     mWiFiRelay,
@@ -20,7 +30,7 @@ typedef struct
 {
     u8 day;
     u8 month;
-    u8 year;
+    u16 year;
     u8 hour;
     u8 minute;
     u8 second;
