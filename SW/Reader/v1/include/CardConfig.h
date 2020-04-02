@@ -30,10 +30,10 @@ UID_t;
 
 typedef struct __attribute__((packed))
 {
-    UID_t uid;
     Version_t version;
     CardType_t type;
     DateTime_t record_date;
+    UID_t uid;
 }
 CardInfo_t;
 
@@ -52,7 +52,7 @@ typedef struct __attribute__((packed))
 {
     u8 hour_begin;
     u8 hour_end;
-    DaysOfWeek_t dow;
+    u8 dow;
 }
 CardRestrictions_t;
 

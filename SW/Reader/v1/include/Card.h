@@ -3,6 +3,16 @@
 
 #include "CardConfig.h"
 
+extern void Card_SetInfo(card_t *card, CardType_t type, DateTime_t record_date, UID_t uid);
+extern void Card_SetPersonal(card_t *card, char *id, char *name, char *surname, char *mail, char *company, char *department);
+extern void Card_SetNoPersonal(card_t *card);
+//! \example : Card_SetRestrictions(&card, 8, 19, Saturday | Sunday);
+extern void Card_SetRestrictions(card_t *card, u8 begin, u8 end, u8 dow);
+extern void Card_SetNoRestrictions(card_t *card);
+extern bool Card_isRestricted(card_t *card, u8 hour, Days_t today);
+
+extern bool Card_UIDCompare(UID_t *uid, card_t *card);
+
 extern void Card_cardRawDataDestroy(cardRaw_t *cardRaw);
 extern card_t *Card_Create();
 extern void Card_Destroy(card_t *card);

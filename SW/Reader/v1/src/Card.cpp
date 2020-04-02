@@ -2,8 +2,73 @@
 #include "tools.h"
 //#include "crypto/crypto.h"
 
-// TODO : card_t getters and setters
 // TODO : add crypto
+
+void Card_SetInfo(card_t *card, CardType_t type, DateTime_t record_date, UID_t uid)
+{
+    card->info.version.major = FW_VersionMajor;
+    card->info.version.minor = FW_VersionMinor;
+    card->info.type = type;
+    card->info.record_date = record_date;
+    card->info.uid = uid;
+}
+
+void Card_SetPersonal(card_t *card, char *id, char *name, char *surname, char *mail, char *company, char *department)
+{
+    strncpy(card->personal.id, id, CARD_CFG_NAME_LENGTH);
+    strncpy(card->personal.name, name, CARD_CFG_NAME_LENGTH);
+    strncpy(card->personal.surname, surname, CARD_CFG_NAME_LENGTH);
+    strncpy(card->personal.mail, mail, CARD_CFG_NAME_LENGTH);
+    strncpy(card->personal.company, company, CARD_CFG_NAME_LENGTH);
+    strncpy(card->personal.department, department, CARD_CFG_NAME_LENGTH);
+}
+
+void Card_SetNoPersonal(card_t *card)
+{
+    memset(&card->personal, 0, sizeof(CardPersonal_t));
+}
+
+//! \example : Card_SetRestrictions(&card, 8, 19, Saturday | Sunday);
+void Card_SetRestrictions(card_t *card, u8 begin, u8 end, u8 dow)
+{
+    card->restrictions.hour_begin = begin;
+    card->restrictions.hour_end = end;
+    card->restrictions.dow = dow;
+}
+
+void Card_SetNoRestrictions(card_t *card)
+{
+    memset(&card->restrictions, 0, sizeof(CardRestrictions_t));
+}
+
+bool Card_isRestricted(card_t *card, u8 hour, Days_t today)
+{
+    bool ret = false;
+
+    if(24 > hour && 24 > card->restrictions.hour_begin && 24 > card->restrictions.hour_end)
+    {
+        if(card->restrictions.hour_begin < card->restrictions.hour_end)
+        {
+            ret = hour >= card->restrictions.hour_begin && hour <= card->restrictions.hour_end;
+        }
+        else
+        {
+            ret = hour >= card->restrictions.hour_begin || hour <= card->restrictions.hour_end;
+        }
+    }
+
+    if(0 < today && (card->restrictions.dow & today))
+    {
+        ret = true;
+    }
+
+    return ret;
+}
+
+bool Card_UIDCompare(UID_t *uid, card_t *card)
+{
+    return (0 == memcmp(uid, &card->info.uid, sizeof(UID_t)));
+}
 
 u16 Card_CalcPadding(u16 size, u16 mult)
 {
