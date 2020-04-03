@@ -3,7 +3,14 @@ Wifi Reader config
 
 ## Cihaza ait sabit bilgiler görüntülenir
 - Unique Device ID
-- Versiyon 
+- FW Version
+- Device Model
+- Cihaz MAC
+- Cihaz IP
+- Hafıza doluluk
+- Kayıtlı kart sayısı
+- Kayıtlı log sayısı
+- Tarih-Saat
 
 ## Kullanici bilgileri
 - Firma ismi
@@ -11,7 +18,7 @@ Wifi Reader config
 - Cihaz ismi
 - Cihaz aciklama
 - Sistem Şifresi (tum cihazlarda aynı olmalı)
-- Login usr:pwd [sor/sorma]
+- Web Login usr:pwd [sor/sorma]
 
 ## Geçiş tipi?
 - Giriş/Çıkış
@@ -47,9 +54,9 @@ Bu saatlerde yonetici karti haric kapiyi acmaz!
   - [x] Logu aninda ilet
   - [x] Hafiza dolunca ilet
 - Loglama metodu :
-  - mail
-  - rest api (GET)
-  - udp - address port
+  - Mail
+  - REST api (GET)
+  - UDP - address port
   - kendi ucretli platformumuz - token
 - [x] Yetkisiz girisler loglansin mi?
 - [ ] Yeni kart tanimlamalari loglansin mi?

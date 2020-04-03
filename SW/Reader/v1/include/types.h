@@ -36,17 +36,16 @@ typedef struct
     u8 second;
 } DateTime_t;
 
-typedef struct __attribute__((packed))
+typedef enum : u8
 {
-    u8 sunday : 1;
-    u8 monday : 1;
-    u8 tuesday : 1;
-    u8 wednesday : 1;
-    u8 thursday : 1;
-    u8 friday : 1;
-    u8 saturday : 1;
-}
-DaysOfWeek_t;
+    Sunday      = 1,
+    Monday      = 2,
+    Tuesday     = 4,
+    Wednesday   = 8,
+    Thursday    = 16,
+    Friday      = 32,
+    Saturday    = 64
+} Days_t;
 
 typedef enum
 {
