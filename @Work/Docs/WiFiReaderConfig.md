@@ -18,32 +18,28 @@ Wifi Reader config
 - Cihaz ismi
 - Cihaz aciklama
 - Sistem Şifresi (tum cihazlarda aynı olmalı)
-- Web Login usr:pwd [sor/sorma]
+- Web Login password
+- mDNS name (http://name.local)
 
 ## Geçiş tipi?
 - Giriş/Çıkış
 
-## Internet wifi
-- ssid, password - listeden sec?
-- anten gucu ayari
-
-## AP wifi
-- Ssid, password
-
-## Wifi calisma modu
+## wifi
+- STA ssid, password - listeden sec?
+- STA acik/kapali
+- APP ssid, password
 - AP acik/kapali
-- mDNS name (http://name.local)
 
 ## Kapida role var mi?
 - ismi? - listeden sec
-5 roleye kadar eklenebilsin
+_5 roleye kadar eklenebilsin_
 - [x] rölelerle ağ üzerinden haberleş
 - [ ] rölelerle direkt haberleş (düşük güç modunda önerilir)
 
 ## Giris restrictions?
 - Aktif saat araligi  (9-18)
 - Aktif haftanin gunu
-Bu saatlerde yonetici karti haric kapiyi acmaz!
+_Bu saatlerde yonetici karti haric kapiyi acmaz!_
 - [ ] Ziyaretçi kartı geçiş yapabilsin mi?
 - [x] Bekçi kartı geçiş yapabilsin mi?
 
@@ -52,7 +48,7 @@ Bu saatlerde yonetici karti haric kapiyi acmaz!
   - [x] Belirli saatlerde ilet
     - Loglama saatleri (5 adet)
   - [x] Logu aninda ilet
-  - [x] Hafiza dolunca ilet
+  - _Hafiza dolunca otomatik iletir!_
 - Loglama metodu :
   - Mail
   - REST api (GET)
@@ -70,6 +66,8 @@ Bu saatlerde yonetici karti haric kapiyi acmaz!
   - Saatler birbirlerini overlap yapamasin
 - [x] Uyandirma butonu yada karti aktif
 - [ ] IR aktif
+- anten gucu ayari
+- kalibrasyon ayarı (init hızı)
 
 ## Yazilim guncellemeleri?
 - [x] Otomatik al
