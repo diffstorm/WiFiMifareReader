@@ -57,4 +57,11 @@ typedef enum
     t_Weeks = 5
 } TimeUnit_t;
 
+typedef struct __attribute__((packed))
+{
+    IPAddress ip;
+    u16 port;
+}
+IP_Port;
+
 #endif // __TYPES_H__

@@ -1,11 +1,17 @@
 #ifndef __DEFS_H__
 #define __DEFS_H__
 
+#include <ESP8266WiFi.h>
+
 // Code Modules Settings
 // ------------------------------------------
 //#define DEVELOPER_MODE    // uncomment on production
 #define WDT                 // Watch dog timer
 //#define SERIAL_PORT
+//#define IR_CARD_DETECT
+//#define LOW_POWER_MODE
+//#define ESP_NOW
+//#define UDP_SERVER
 #define WEB_SERVER          // Web server for device control
 #define OTA_HTTPCLIENT      // /ota downloads .bin file from http and upgrades the firmware
 #define OTA_HTTPSERVER      // /update has an upload form for the local .bin file
@@ -46,7 +52,7 @@
 
 // Hardware pin definitions
 // ------------------------------------------
-
+//TODO:
 // ------------------------------------------
 
 // Macros

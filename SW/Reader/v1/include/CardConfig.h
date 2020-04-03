@@ -9,7 +9,7 @@
 #define CARD_MAX_SIZE        (CARD_ROW_SIZE * CARD_SECTOR_SIZE)
 #define CARD_CHECKSUM_SEED   0xDEAD
 
-typedef enum
+typedef enum : u8
 {
     ct_IDLE = 0,
     ct_UNUSED,
@@ -50,8 +50,8 @@ CardPersonal_t;
 
 typedef struct __attribute__((packed))
 {
-    u8 hour_begin;
-    u8 hour_end;
+    u8 hour_begin; // < 24 for valid hour
+    u8 hour_end; // < 24 for valid hour
     u8 dow;
 }
 CardRestrictions_t;
