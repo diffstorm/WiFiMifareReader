@@ -1,5 +1,5 @@
-#ifndef LED_H
-#define LED_H
+#ifndef __LED_H__
+#define __LED_H__
 
 typedef enum
 {
@@ -11,13 +11,8 @@ typedef enum
     LED_ACTION_REMOVE_CARD_ERROR
 } LED_action_t;
 
-void LED_init();
+extern void LED_init();
+extern void LED_SetAction(LED_action_t action);
+extern void LED_Handler();
 
-void LED_SetAction(LED_action_t action);
-
-
-void LED_Handler();
-
-
-
-#endif
+#endif // __LED_H__

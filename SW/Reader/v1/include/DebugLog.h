@@ -1,5 +1,5 @@
-#ifndef LOG_H
-#define LOG_H
+#ifndef __DEBUGLOG_H__
+#define __DEBUGLOG_H__
 
 #define DEBUG_LOG   1 // 1 : enable | 0 : disable
 
@@ -31,4 +31,4 @@ void DBG_LOG(const char *message, const char *func, const char *loc, int *i, flo
 #define LOGh(z,h)  ((void)0)
 #endif
 
-#endif
+#endif // __DEBUGLOG_H__

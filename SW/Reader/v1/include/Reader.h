@@ -1,3 +1,6 @@
+#ifndef __READER_H__
+#define __READER_H__
+
 #include "CardConfig.h"
 
 typedef enum
@@ -8,7 +11,6 @@ typedef enum
     CAN_NOT_READ_UID,
     UID_LEN_ERROR,
     READ_ERROR
-
 } READER_status_t;
 
 void Reader_Init();
@@ -21,3 +23,5 @@ void Reader_Fill_List();
 bool Reader_ComparePassword();     //kart bilgileri gösterilecek
 void READER_stop();
 bool READER_handler();
+
+#endif // __READER_H__

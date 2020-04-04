@@ -79,13 +79,13 @@ typedef struct __attribute__((packed))
     LogSendTimeType_t logSendTimeType;
     u8 SpecificHours[LOG_SPECIFIC_HOURS_COUNT]; // < 24 for valid hour
     LogSendMethod_t logSendMethod;
-    union
+    union LogSendDetails
     {
         char mailAddress[DEVICE_CFG_ADDR_LENGTH];
         char restAddress[DEVICE_CFG_ADDR_LENGTH];
         IP_Port udpAddress;
         char paidServiceToken[DEVICE_CFG_ADDR_LENGTH];
-    } LogSendDetails;
+    };
     bool LogUnauthorized;
     bool LogNewCards;
     bool LogRemovedCards;

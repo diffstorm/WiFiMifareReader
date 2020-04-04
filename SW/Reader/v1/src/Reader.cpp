@@ -1,9 +1,10 @@
 #include <Reader.h>
-#include<Buzzer.h>
+#include <MFRC522.h>
+#include <LinkedList.h>
+#include <Buzzer.h>
 
 #define RST_PIN 5
 #define SS_PIN 4
-//BZR_Tone_t t;
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 MFRC522::MIFARE_Key key;

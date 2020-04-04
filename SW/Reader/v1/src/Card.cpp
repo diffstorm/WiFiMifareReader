@@ -139,7 +139,6 @@ void Card_Destroy(card_t *card)
 bool Card_Encapsulate(card_t *card, cardRaw_t *cardRaw)
 {
     bool ret = false;
-    u16 i;
     u16 size = sizeof(card_t);
     u16 padding = Card_CalcPadding(size, CARD_ROW_SIZE);
     size += padding;

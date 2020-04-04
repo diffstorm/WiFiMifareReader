@@ -1,5 +1,5 @@
-#include <log.h>
 #include <Arduino.h>
+#include <DebugLog.h>
 
 void DBG_LOG_Init(unsigned long baudrate)
 {

@@ -1,9 +1,10 @@
-#ifndef SysTick_h
-#define SysTick_h
-#include <stdint.h>
+#ifndef __SYSTICK_H__
+#define __SYSTICK_H__
 
-uint32_t SysTick_elapsed(uint32_t t0);
+#include "types.h"
 
-uint32_t SysTick_get();
+u32 SysTick_elapsed(u32 t0);
 
-#endif
+u32 SysTick_get();
+
+#endif // __SYSTICK_H__

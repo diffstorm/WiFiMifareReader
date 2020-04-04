@@ -59,7 +59,7 @@ typedef enum
 
 typedef struct __attribute__((packed))
 {
-    IPAddress ip;
+    u32 ip; // IPAddress
     u16 port;
 }
 IP_Port;

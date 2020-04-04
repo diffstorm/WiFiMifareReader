@@ -1,11 +1,8 @@
 #include <ESP8266WiFi.h>
-#include <MFRC522.h>
-#include <IRremoteESP8266.h>
-#include <IRremotes.h>
 #include <FS.h>
-#include <Reader.h>
-#include <ESPControl.h>
-#include <Buzzer.h>
+#include "Reader.h"
+#include "Buzzer.h"
+#include "IR.h"
 #include "tools.h"
 
 extern "C" {
@@ -37,7 +34,7 @@ void setup()
     Serial.flush();
 #endif
     Reader_Init();
-    IRremote_Init();
+    IR_Init();
     BZR_Init();
 #ifdef SERIAL_PORT
     WiFi.printDiag(Serial);
@@ -51,7 +48,6 @@ void loop()
     ESP.wdtFeed();
 #endif
 
-    ESP_Handler();
     BZR_Handler();
     delay(100);
 }
