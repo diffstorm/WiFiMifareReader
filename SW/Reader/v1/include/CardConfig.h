@@ -17,8 +17,9 @@ typedef enum : u8
     ct_GUARD,
     ct_USER,
     ct_ADMIN,
+    ct_SERVICE,
     ct_WAKE,
-    ct_END
+    ct_MAX
 } CardType_t;
 
 typedef struct __attribute__((packed))

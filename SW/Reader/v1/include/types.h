@@ -44,7 +44,8 @@ typedef enum : u8
     Wednesday   = 8,
     Thursday    = 16,
     Friday      = 32,
-    Saturday    = 64
+    Saturday    = 64,
+    Everyday     = 127
 } Days_t;
 
 typedef enum

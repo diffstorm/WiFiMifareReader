@@ -27,6 +27,8 @@
 // ------------------------------------------
 #define FW_VersionMajor		  1
 #define FW_VersionMinor		  0
+#define DeviceName            "WReader"
+#define DevicePassword        "12345678"
 #define DeviceModel			  mWiFiReader
 #define DeviceChipID		  ESP.getChipId()
 #define DeviceFlashID		  ESP.getFlashChipId()

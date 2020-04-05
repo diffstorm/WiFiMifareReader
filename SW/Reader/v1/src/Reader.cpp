@@ -58,7 +58,6 @@ bool Reader_IsMifare()
 
 READER_status_t Reader_ReadBlock()
 {
-
     MFRC522::StatusCode status;
     byte buffer[18];
     byte bufferSize = sizeof(buffer);
@@ -80,15 +79,7 @@ READER_status_t Reader_ReadBlock()
                     if(status == MFRC522::STATUS_OK)
                     {
                         Serial.println("Read successfull");
-                        card.password = ((long)buffer[0] << 24) & (0xFFFFFFFF);
-                        card.password |= ((long)buffer[1] << 16) & (0xFFFFFF);
-                        card.password |= ((long)buffer[2] << 8) & (0xFFFF);
-                        card.password |= ((long)buffer[3]) & (0xFF);
-                        Serial.print("kart ici sifre= ");
-                        Serial.println(card.password);
                         ret = READ_OK;
-
-
                     }
                 }
             }
@@ -106,12 +97,12 @@ void Reader_Fill_List()
 bool Reader_ComparePassword()
 {
     bool ret = false;
-    for(int i = 0; i < passwordList.size(); i++)
+    //for(int i = 0; i < passwordList.size(); i++)
     {
-        if(card.password == passwordList.get(i))
+        //if(card.password == passwordList.get(i))
         {
             ret = true;
-            break;
+            //break;
             //Serial.println(BZR_State);
         }
     }

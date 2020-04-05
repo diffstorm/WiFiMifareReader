@@ -34,7 +34,9 @@ void setup()
     Serial.flush();
 #endif
     Reader_Init();
+#ifdef IR_CARD_DETECT
     IR_Init();
+#endif
     BZR_Init();
 #ifdef SERIAL_PORT
     WiFi.printDiag(Serial);

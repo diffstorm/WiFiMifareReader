@@ -38,7 +38,9 @@ void Card_SetRestrictions(card_t *card, u8 begin, u8 end, u8 dow)
 
 void Card_SetNoRestrictions(card_t *card)
 {
-    memset(&card->restrictions, 0, sizeof(CardRestrictions_t));
+    card->restrictions.hour_begin = 99;
+    card->restrictions.hour_end = 99;
+    card->restrictions.dow = (Days_t)Everyday;
 }
 
 bool Card_isRestricted(card_t *card, u8 hour, Days_t today)

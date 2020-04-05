@@ -24,28 +24,54 @@ DeviceInfo_t;
 typedef enum : u8
 {
     pt_In = 0,
-    pt_Out
-} PassingType_t;
+    pt_Out,
+    pt_MAX
+}
+PassingType_t;
 
 typedef struct __attribute__((packed)) // Wifi profile
 {
+    bool active : 8;
     char ssid[SSID_LEN_MAX];
     char psk[PSK_LEN_MAX];
-    bool active : 8;
+    bool dhcp : 8; // (STA)
+    u32 ip;     // 192.168.1.100 (AP, STA)
+    u32 subnet; // 255.255.255.1 (AP, STA)
+    u32 gateway;// 192.168.1.1   (STA)
+    u32 dns;    // 156.154.70.22 (STA)
+    u32 dns2;   // 156.154.71.22 (STA)
 }
-Conn_t;
+WiFiProfile_t;
 
 typedef struct __attribute__((packed))
 {
-    Conn_t   wConnSTA;       // Connection parameters as station
-    Conn_t   wConnAP;        // Connection parameters as access point
+    WiFiProfile_t STA;       // Connection parameters as station
+    WiFiProfile_t AP;        // Connection parameters as access point
 }
 WiFiConfig_t;
 
 typedef struct __attribute__((packed))
 {
+    u32 ip;
+    u16 port;
+    u8 period; // [hours]
+    u8 timezone; // [hours] - Turkey UTC+03:00
+}
+NTPSettings_t;
+
+typedef enum : u8
+{
+    cc_Disabled = 0,
+    cc_UDP,
+    cc_ESPNow,
+    cc_MAX
+}
+CommChannel_t;
+
+typedef struct __attribute__((packed))
+{
     char name[DEVICE_CFG_NAME_LENGTH]; // null terminated
-    bool talkDirectly; // ESPNow or UDP
+    CommChannel_t commChannel;
 }
 DoorSwitch_t;
 
@@ -62,16 +88,20 @@ DeviceRestrictions_t;
 typedef enum : u8
 {
     lst_SpecificHours = 0,
-    lst_Immediately
-} LogSendTimeType_t;
+    lst_Immediately,
+    lst_MAX
+}
+LogSendTimeType_t;
 
 typedef enum : u8
 {
     lsm_Mail = 0,
     lsm_REST,
     lsm_UDP,
-    lsm_PaidService
-} LogSendMethod_t;
+    lsm_PaidService,
+    lsm_MAX
+}
+LogSendMethod_t;
 
 typedef struct __attribute__((packed))
 {
@@ -104,6 +134,7 @@ CardScanRule_t;
 
 typedef struct __attribute__((packed))
 {
+    bool active;
     CardScanRule_t cardScanRule[CARD_SCAN_RULES_COUNT];
     bool wakeCardActive;
     bool IRDetectActive;
@@ -115,7 +146,7 @@ LowPowerMode_t;
 typedef struct __attribute__((packed))
 {
     bool AutoVersionCheck;
-    u8 CheckPeriod;
+    u8 CheckPeriod; // # of days
 }
 FirmwareChecks_t;
 
@@ -124,6 +155,7 @@ typedef struct __attribute__((packed))
     DeviceInfo_t info;
     PassingType_t passingType;
     WiFiConfig_t wifiConfig;
+    NTPSettings_t ntpSettings;
     DoorSwitch_t doorSwitch[DOOR_SWITCH_COUNT];
     DeviceRestrictions_t restrictions;
     LogSettings_t logSettings;
