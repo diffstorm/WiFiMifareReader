@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
+#include <time.h>
 #include "defs.h"
 
 typedef uint8_t u8;

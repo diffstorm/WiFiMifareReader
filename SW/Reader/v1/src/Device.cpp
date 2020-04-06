@@ -143,30 +143,26 @@ u16 Device_GetDoorSwitchCount(DeviceConfig_t *device)
     return ret;
 }
 
-//! \example : Device_SetRestrictions(&device, 8, 19, Saturday | Sunday, false, true);
-void Device_SetRestrictions(DeviceConfig_t *device, u8 begin, u8 end, u8 dow, bool visitorPass, bool guardPass)
+//! \example : Device_SetRestrictions(&device, 8, 19, Saturday | Sunday, true, false);
+void Device_SetRestrictions(DeviceConfig_t *device, u8 begin, u8 end, u8 dow, bool visitor, bool guard)
 {
     device->restrictions.hour_begin = begin;
     device->restrictions.hour_end = end;
     device->restrictions.dow = dow;
-    device->restrictions.VisitorPass = visitorPass;
-    device->restrictions.GuardPass = guardPass;
+    device->restrictions.Visitor = visitor;
+    device->restrictions.Guard = guard;
 }
 
 void Device_SetNoRestrictions(DeviceConfig_t *device)
 {
-    device->restrictions.hour_begin = 99;
-    device->restrictions.hour_end = 99;
-    device->restrictions.dow = (Days_t)Everyday;
-    device->restrictions.VisitorPass = true;
-    device->restrictions.GuardPass = true;
+    memset(&device->restrictions, 0, sizeof(DeviceRestrictions_t));
 }
 
 bool Device_isRestricted(DeviceConfig_t *device, u8 hour, Days_t today, CardType_t type)
 {
     bool ret = false;
 
-    if(24 > hour && 24 > device->restrictions.hour_begin && 24 > device->restrictions.hour_end)
+    if(24 > hour && 0 < device->restrictions.hour_begin && 0 < device->restrictions.hour_end)
     {
         if(device->restrictions.hour_begin < device->restrictions.hour_end)
         {
@@ -183,12 +179,12 @@ bool Device_isRestricted(DeviceConfig_t *device, u8 hour, Days_t today, CardType
         ret = true;
     }
 
-    if(false == device->restrictions.VisitorPass && ct_VISITOR == type)
+    if(false != device->restrictions.Visitor && ct_VISITOR == type)
     {
         ret = true;
     }
 
-    if(false == device->restrictions.GuardPass && ct_GUARD == type)
+    if(false != device->restrictions.Guard && ct_GUARD == type)
     {
         ret = true;
     }

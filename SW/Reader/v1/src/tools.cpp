@@ -1,5 +1,34 @@
 #include "tools.h"
 
+//! The epoch function returns Unix timestamp for a date-time with year correction
+/*!
+  \param [in] dt : pointer to date-time struct
+  \return timestamp in seconds
+*/
+time_t epoch(DateTime_t *dt)
+{
+    u16 y;
+    u8 m;
+    u8 d;
+    time_t t;
+
+    y = dt->year;
+    m = dt->month;
+    d = dt->day;
+    if(m <= 2)
+    {
+        m += 12;
+        y -= 1;
+    }
+    t = (365 * y) + (y / 4) - (y / 100) + (y / 400);
+    t += (30 * m) + (3 * (m + 1) / 5) + d;
+    t -= 719561;
+    t *= 86400;
+    t += (3600 * dt->hour) + (60 * dt->minute) + dt->second;
+
+    return t;
+}
+
 //-----------------------------------------------------------------
 // HW True Random Number Generator of ESP8266
 // return : 8 bit random generated value

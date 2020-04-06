@@ -15,8 +15,8 @@ extern void Device_SetDoorSwitch(DeviceConfig_t *device, DoorSwitch_t ds, u8 ind
 extern void Device_SetNoDoorSwitch(DeviceConfig_t *device);
 extern u16 Device_GetDoorSwitchCount(DeviceConfig_t *device);
 
-//! \example : Device_SetRestrictions(&device, 8, 19, Saturday | Sunday, false, true);
-extern void Device_SetRestrictions(DeviceConfig_t *device, u8 begin, u8 end, u8 dow, bool visitorPass, bool guardPass);
+//! \example : Device_SetRestrictions(&device, 8, 19, Saturday | Sunday, true, false);
+extern void Device_SetRestrictions(DeviceConfig_t *device, u8 begin, u8 end, u8 dow, bool visitor, bool guard);
 extern void Device_SetNoRestrictions(DeviceConfig_t *device);
 extern bool Device_isRestricted(DeviceConfig_t *device, u8 hour, Days_t today, CardType_t type);
 
