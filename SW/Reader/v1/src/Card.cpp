@@ -212,7 +212,7 @@ bool Card_GetSector(u8 sector, cardRaw_t *cardRaw, u8 data[CARD_ROW_SIZE])
     else
     {
         index = (sector - 1) * CARD_ROW_SIZE;
-        if(cardRaw->length < index + CARD_ROW_SIZE)
+        if(cardRaw->length > index + CARD_ROW_SIZE)
         {
             memcpy(p, cardRaw->data + index, CARD_ROW_SIZE);
             ret = true;
@@ -255,7 +255,7 @@ bool Card_SetSector(u8 sector, u8 data[CARD_ROW_SIZE], cardRaw_t *cardRaw)
     else
     {
         index = (sector - 1) * CARD_ROW_SIZE;
-        if(cardRaw->length < index + CARD_ROW_SIZE)
+        if(cardRaw->length > index + CARD_ROW_SIZE)
         {
             memcpy(cardRaw->data + index, p, CARD_ROW_SIZE);
             ret = true;
