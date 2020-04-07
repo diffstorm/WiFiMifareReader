@@ -12,7 +12,7 @@ byte sector = 1;
 byte blockAddres = 4;
 byte trailerBlock = 7;
 LinkedList<long> passwordList = LinkedList<long>();
-card_t card;
+card_t* card;
 
 void Reader_Prepare_Key()
 {
@@ -56,6 +56,44 @@ bool Reader_IsMifare()
     return ret;
 }
 
+
+READER_status_t Reader_WriteBlock(int blockNumber, byte arrayAddress[]) 
+{
+  READER_status_t ret= WRITE_OK;
+  MFRC522::StatusCode status;
+  //this makes sure that we only write into data blocks. Every 4th block is a trailer block for the access/security info.
+  int largestModule4Number = blockNumber/4 * 4;
+  int trailerBlock = largestModule4Number + 3; //determine trailer block for the sector
+  if (blockNumber > 2 && (blockNumber+1)%4 == 0 || blockNumber == 0)
+  {
+      blockNumber++;
+      //Serial.print(blockNumber);Serial.println(" is a trailer block:");
+      //ret = READ_ERROR;
+  }
+  Serial.print(blockNumber);
+  Serial.println(" is a data block:");
+  
+  /*****************************************authentication of the desired block for access***********************************************************/
+  status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, trailerBlock, &key, &(mfrc522.uid));
+
+  if (status != MFRC522::STATUS_OK) {
+         Serial.print("PCD_Authenticate() failed: ");
+         Serial.println(mfrc522.GetStatusCodeName(status));
+         ret = READ_ERROR;
+  }
+
+  /*****************************************writing the block***********************************************************/ 
+  status = mfrc522.MIFARE_Write(blockNumber, arrayAddress, 16);
+  if (status != MFRC522::STATUS_OK) {
+           Serial.print("MIFARE_Write() failed: ");
+           Serial.println(mfrc522.GetStatusCodeName(status));
+           ret = READ_ERROR;
+  }
+  Serial.println("block was written");
+  return ret;
+}
+
+
 READER_status_t Reader_ReadBlock()
 {
     MFRC522::StatusCode status;
@@ -71,13 +109,14 @@ READER_status_t Reader_ReadBlock()
             if(mfrc522.uid.size > 0)
             {
                 status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, trailerBlock, &key, &(mfrc522.uid));
-                status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, trailerBlock, &key, &(mfrc522.uid));
                 if(status == MFRC522::STATUS_OK)
                 {
                     Serial.println("authentication successfull");
+
                     status = mfrc522.MIFARE_Read(blockAddres, buffer, &bufferSize);
                     if(status == MFRC522::STATUS_OK)
                     {
+                        
                         Serial.println("Read successfull");
                         ret = READ_OK;
                     }

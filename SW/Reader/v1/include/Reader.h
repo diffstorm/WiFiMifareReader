@@ -6,6 +6,7 @@
 typedef enum
 {
     READ_OK,
+    WRITE_OK,
     NOTFOUND,
     AUTH_ERROR,
     CAN_NOT_READ_UID,
@@ -18,7 +19,7 @@ void Reader_Sleep();
 void Reader_WakeUp();
 bool Reader_IsMifare();
 READER_status_t Reader_ReadBlock();
-//void Reader_WriteBlock();
+READER_status_t Reader_WriteBlock(int blockNumber, byte arrayAddress[]);
 void Reader_Fill_List();
 bool Reader_ComparePassword();     //kart bilgileri gösterilecek
 void READER_stop();

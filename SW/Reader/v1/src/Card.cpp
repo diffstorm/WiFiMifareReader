@@ -1,10 +1,11 @@
 #include "Card.h"
 #include "tools.h"
+#include "Reader.h"
 //#include "crypto/crypto.h"
 
 // TODO : add crypto
 
-void Card_SetInfo(card_t *card, CardType_t type, time_t record_date, UID_t uid)
+void Card_SetInfo(card_t *card, CardType_t type, DateTime_t record_date, UID_t uid)
 {
     card->info.version.major = FW_VersionMajor;
     card->info.version.minor = FW_VersionMinor;
@@ -27,26 +28,27 @@ void Card_SetNoPersonal(card_t *card)
 {
     memset(&card->personal, 0, sizeof(CardPersonal_t));
 }
-
-//! \example : Card_SetRestrictions(&card, 8, 19, Saturday | Sunday, 9005544151);
-void Card_SetRestrictions(card_t *card, u8 begin, u8 end, u8 dow, time_t validuntil)
+ 
+//! \example : Card_SetRestrictions(&card, 8, 19, Saturday | Sunday);
+void Card_SetRestrictions(card_t *card, u8 begin, u8 end, u8 dow)
 {
     card->restrictions.hour_begin = begin;
     card->restrictions.hour_end = end;
     card->restrictions.dow = dow;
-    card->restrictions.validuntil = validuntil;
 }
 
 void Card_SetNoRestrictions(card_t *card)
 {
-    memset(&card->restrictions, 0, sizeof(CardRestrictions_t));
+    card->restrictions.hour_begin = 99;
+    card->restrictions.hour_end = 99;
+    card->restrictions.dow = (Days_t)Everyday;
 }
 
-bool Card_isRestricted(card_t *card, u8 hour, Days_t today, time_t now)
+bool Card_isRestricted(card_t *card, u8 hour, Days_t today)
 {
     bool ret = false;
 
-    if(24 > hour && 0 < card->restrictions.hour_begin && 0 < card->restrictions.hour_end)
+    if(24 > hour && 24 > card->restrictions.hour_begin && 24 > card->restrictions.hour_end)
     {
         if(card->restrictions.hour_begin < card->restrictions.hour_end)
         {
@@ -59,11 +61,6 @@ bool Card_isRestricted(card_t *card, u8 hour, Days_t today, time_t now)
     }
 
     if(0 < today && (card->restrictions.dow & today))
-    {
-        ret = true;
-    }
-
-    if(0 < now && 0 < card->restrictions.validuntil && card->restrictions.validuntil <= now)
     {
         ret = true;
     }
@@ -268,6 +265,7 @@ bool Card_SetSector(u8 sector, u8 data[CARD_ROW_SIZE], cardRaw_t *cardRaw)
 void example()
 {
     u8 sector;
+    u8 block;
     u8 data[CARD_ROW_SIZE];
     cardRaw_t cardRaw;
     card_t *card;
@@ -280,12 +278,17 @@ void example()
     {
         // Fill the card object
         // e.g card->info.type = ct_USER;
+        card->info.type=ct_GUARD;
+        strcpy(card->personal.name,"cihan");
+        card->info.uid.length=10;
+        memset(card->info.uid.uid,1,card->info.uid.length);
         if(false != Card_Encapsulate(card, &cardRaw))
         {
             sector = 0;
             while(false != Card_GetSector(sector, &cardRaw, data))
             {
                 // Write data to sector 0..N
+                Reader_WriteBlock(sector,data);
                 sector++;
             }
             Card_cardRawDataDestroy(&cardRaw);
