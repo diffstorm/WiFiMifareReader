@@ -11,7 +11,6 @@ MFRC522::MIFARE_Key key;
 byte sector = 1;
 byte blockAddres = 4;
 byte trailerBlock = 7;
-LinkedList<long> passwordList = LinkedList<long>();
 card_t* card;
 
 void Reader_Prepare_Key()
@@ -73,7 +72,7 @@ READER_status_t Reader_WriteBlock(int blockNumber, byte arrayAddress[])
   Serial.print(blockNumber);
   Serial.println(" is a data block:");
   
-  /*****************************************authentication of the desired block for access***********************************************************/
+//authentication of the desired block for access
   status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, trailerBlock, &key, &(mfrc522.uid));
 
   if (status != MFRC522::STATUS_OK) {
@@ -82,7 +81,7 @@ READER_status_t Reader_WriteBlock(int blockNumber, byte arrayAddress[])
          ret = READ_ERROR;
   }
 
-  /*****************************************writing the block***********************************************************/ 
+  //writing the block
   status = mfrc522.MIFARE_Write(blockNumber, arrayAddress, 16);
   if (status != MFRC522::STATUS_OK) {
            Serial.print("MIFARE_Write() failed: ");
@@ -94,7 +93,7 @@ READER_status_t Reader_WriteBlock(int blockNumber, byte arrayAddress[])
 }
 
 
-READER_status_t Reader_ReadBlock()
+READER_status_t Reader_ReadBlock(int blockNumber,byte block[CARD_ROW_SIZE])
 {
     MFRC522::StatusCode status;
     byte buffer[18];
@@ -113,10 +112,9 @@ READER_status_t Reader_ReadBlock()
                 {
                     Serial.println("authentication successfull");
 
-                    status = mfrc522.MIFARE_Read(blockAddres, buffer, &bufferSize);
+                    status = mfrc522.MIFARE_Read(blockNumber, buffer, &bufferSize);
                     if(status == MFRC522::STATUS_OK)
                     {
-                        
                         Serial.println("Read successfull");
                         ret = READ_OK;
                     }
@@ -128,11 +126,11 @@ READER_status_t Reader_ReadBlock()
     return ret;
 }
 
-void Reader_Fill_List()
+/*void Reader_Fill_List()
 {
     passwordList.add(279032257);
     passwordList.add(279038855);
-}
+} 
 bool Reader_ComparePassword()
 {
     bool ret = false;
@@ -149,7 +147,7 @@ bool Reader_ComparePassword()
     //Serial.println(t);
     //BZR_Play_tone();
     return ret;
-}
+} */
 
 void READER_stop()
 {

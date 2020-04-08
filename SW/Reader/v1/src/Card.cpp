@@ -302,6 +302,7 @@ void example()
     for(sector = 0; sector < CARD_SECTOR_SIZE; sector++)
     {
         // Read sector 0..N into data
+        Reader_ReadBlock(sector,data);
         if(false == Card_SetSector(sector, data, &cardRaw))
         {
             break;

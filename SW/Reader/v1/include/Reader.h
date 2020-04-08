@@ -18,8 +18,8 @@ void Reader_Init();
 void Reader_Sleep();
 void Reader_WakeUp();
 bool Reader_IsMifare();
-READER_status_t Reader_ReadBlock();
-READER_status_t Reader_WriteBlock(int blockNumber, byte arrayAddress[]);
+READER_status_t Reader_ReadBlock(int blockNumber,byte block[CARD_ROW_SIZE]);
+READER_status_t Reader_WriteBlock(int blockNumber, byte arrayAddress[CARD_ROW_SIZE]);
 void Reader_Fill_List();
 bool Reader_ComparePassword();     //kart bilgileri gösterilecek
 void READER_stop();
