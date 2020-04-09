@@ -29,26 +29,38 @@ typedef enum : u8
 }
 PassingType_t;
 
-typedef struct __attribute__((packed)) // Wifi profile
+typedef struct __attribute__((packed)) // Wifi profile for STA
 {
     bool active : 8;
-    u8 bssid[6]; // (STA)
+    u8 bssid[6];
     bool bssid_active;
     char ssid[SSID_LEN_MAX];
     char psk[PSK_LEN_MAX];
-    bool dhcp : 8; // (STA)
-    u32 ip;     // 192.168.1.100 (AP, STA)
-    u32 subnet; // 255.255.255.1 (AP, STA)
-    u32 gateway;// 192.168.1.1   (STA)
-    u32 dns;    // 156.154.70.22 (STA)
-    u32 dns2;   // 156.154.71.22 (STA)
+    bool dhcp : 8;
+    u32 ip;     // 192.168.1.100
+    u32 subnet; // 255.255.255.1
+    u32 gateway;// 192.168.1.1
+    u32 dns;    // 156.154.70.22
+    u32 dns2;   // 156.154.71.22
 }
-WiFiProfile_t;
+WiFiProfileSTA_t;
+
+typedef struct __attribute__((packed)) // Wifi profile for AP
+{
+    bool active : 8;
+    char ssid[SSID_LEN_MAX];
+    char psk[PSK_LEN_MAX];
+    u32 ip;     // 192.168.4.1
+    u32 subnet; // 255.255.255.1
+    bool ssid_hidden;
+    u8 channel; // 1 ~ 13
+}
+WiFiProfileAP_t;
 
 typedef struct __attribute__((packed))
 {
-    WiFiProfile_t STA;       // Connection parameters as station
-    WiFiProfile_t AP;        // Connection parameters as access point
+    WiFiProfileSTA_t STA;       // Connection parameters as station
+    WiFiProfileAP_t AP;        // Connection parameters as access point
 }
 WiFiConfig_t;
 

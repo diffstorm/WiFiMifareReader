@@ -1,7 +1,6 @@
 #include "Device.h"
 #include "tools.h"
 
-// TODO : fix wifi config
 // TODO : add ntp settings
 
 bool Device_SetInfo(DeviceConfig_t *device, char *company, char *department, char *deviceName, char *deviceNote, char *systemPwd, char *webPwd, char *mDNSName)
@@ -41,12 +40,17 @@ bool Device_SetPassingType(DeviceConfig_t *device, PassingType_t pt)
     return ret;
 }
 
-WiFiProfile_t Device_CreateWiFiProfile(bool active, char *ssid, char *psk, bool dhcp, u32 ip, u32 subnet, u32 gateway, u32 dns, u32 dns2)
+WiFiProfileSTA_t Device_CreateWiFiProfileSTA(bool active, u8 bssid[6], bool bssid_active, char *ssid, char *psk, bool dhcp, u32 ip, u32 subnet, u32 gateway, u32 dns, u32 dns2)
 {
-    WiFiProfile_t ret;
+    WiFiProfileSTA_t ret;
 
-    memset(&ret, 0, sizeof(WiFiProfile_t));
+    memset(&ret, 0, sizeof(WiFiProfileSTA_t));
     ret.active = active;
+    ret.bssid_active = bssid_active;
+    if(bssid_active)
+    {
+        memcpy(ret.bssid, bssid, sizeof(bssid));
+    }
     strncpy(ret.ssid, ssid, SSID_LEN_MAX);
     strncpy(ret.psk, psk, SSID_LEN_MAX);
     ret.dhcp = dhcp;
@@ -59,7 +63,26 @@ WiFiProfile_t Device_CreateWiFiProfile(bool active, char *ssid, char *psk, bool 
     return ret;
 }
 
-bool Device_SetWifiConfig(DeviceConfig_t *device, WiFiProfile_t STA, WiFiProfile_t AP)
+WiFiProfileAP_t Device_CreateWiFiProfileAP(bool active, char *ssid, char *psk, u32 ip, u32 subnet, bool ssid_hidden, u8 channel)
+{
+    WiFiProfileAP_t ret;
+
+    memset(&ret, 0, sizeof(WiFiProfileAP_t));
+    ret.active = active;
+    strncpy(ret.ssid, ssid, SSID_LEN_MAX);
+    strncpy(ret.psk, psk, SSID_LEN_MAX);
+    ret.ip = ip;
+    ret.subnet = subnet;
+    ret.ssid_hidden = ssid_hidden;
+    if(14 > channel)
+    {
+        ret.channel = channel;
+    }
+
+    return ret;
+}
+
+bool Device_SetWifiConfig(DeviceConfig_t *device, WiFiProfileSTA_t STA, WiFiProfileAP_t AP)
 {
     bool ret = true;
     size_t size;
@@ -75,6 +98,20 @@ bool Device_SetWifiConfig(DeviceConfig_t *device, WiFiProfile_t STA, WiFiProfile
         {
             ret = false;
         }
+        if(false == STA.bssid_active)
+        {
+            memset(STA.bssid, 0, sizeof(STA.bssid));
+        }
+        if(false == STA.dhcp)
+        {
+            STA.ip = 0;
+            STA.subnet = 0;
+            STA.gateway = 0;
+        }
+        if(0 == STA.dns)
+        {
+            STA.dns2 = 0;
+        }
     }
     if(false != ret && false != AP.active)
     {
@@ -83,24 +120,9 @@ bool Device_SetWifiConfig(DeviceConfig_t *device, WiFiProfile_t STA, WiFiProfile
         {
             ret = false;
         }
-        else
+        if(0 == AP.ip)
         {
-            if(0 == AP.ip)
-            {
-                AP.ip = IPAddress(192, 168, 4, 1);
-                if(false != STA.active && false == STA.dhcp && 0 != STA.ip && STA.ip == AP.ip) // Prevent same ip range with STA
-                {
-                    AP.ip = IPAddress(192, 168, 8, 1);
-                }
-            }
-            if(0 == AP.subnet)
-            {
-                AP.subnet = IPAddress(255, 255, 255, 0);
-            }
-            AP.dhcp = 0;
-            AP.gateway = 0;
-            AP.dns = 0;
-            AP.dns2 = 0;
+            AP.subnet = 0;
         }
     }
     if(false != ret)
@@ -234,8 +256,8 @@ void Device_SetDefault(DeviceConfig_t *device)
     memset(device, 0, sizeof(DeviceConfig_t));
     Device_SetInfo(device, NULL, NULL, name, NULL, (char *)DevicePassword, NULL, NULL);
     Device_SetPassingType(device, pt_In);
-    WiFiProfile_t STA = Device_CreateWiFiProfile(false, NULL, NULL, false, 0, 0, 0, 0, 0);
-    WiFiProfile_t AP = Device_CreateWiFiProfile(true, name, (char *)DevicePassword, false, 0, 0, 0, 0, 0);
+    WiFiProfileSTA_t STA = Device_CreateWiFiProfileSTA(false, NULL, false, NULL, NULL, false, 0, 0, 0, 0, 0);
+    WiFiProfileAP_t AP = Device_CreateWiFiProfileAP(true, name, (char *)DevicePassword, 0, 0, false, 0);
     Device_SetWifiConfig(device, STA, AP);
     Device_SetNoDoorSwitch(device);
     Device_SetNoRestrictions(device);

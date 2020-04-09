@@ -8,8 +8,9 @@ extern bool Device_SetInfo(DeviceConfig_t *device, char *company, char *departme
 
 extern bool Device_SetPassingType(DeviceConfig_t *device, PassingType_t pt);
 
-extern WiFiProfile_t Device_CreateWiFiProfile(bool active, char *ssid, char *psk, bool dhcp, u32 ip, u32 subnet, u32 gateway, u32 dns, u32 dns2);
-extern bool Device_SetWifiConfig(DeviceConfig_t *device, WiFiProfile_t STA, WiFiProfile_t AP);
+extern WiFiProfileSTA_t Device_CreateWiFiProfileSTA(bool active, u8 bssid[6], bool bssid_active, char *ssid, char *psk, bool dhcp, u32 ip, u32 subnet, u32 gateway, u32 dns, u32 dns2);
+extern WiFiProfileAP_t Device_CreateWiFiProfileAP(bool active, char *ssid, char *psk, u32 ip, u32 subnet, bool ssid_hidden, u8 channel);
+extern bool Device_SetWifiConfig(DeviceConfig_t *device, WiFiProfileSTA_t STA, WiFiProfileAP_t AP);
 
 extern void Device_SetDoorSwitch(DeviceConfig_t *device, DoorSwitch_t ds, u8 index);
 extern void Device_SetNoDoorSwitch(DeviceConfig_t *device);

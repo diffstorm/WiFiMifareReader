@@ -136,7 +136,7 @@ bool CP_Compress(u8 *data, u16 length, CompressedData_t *out)
             out_length = length;
             out_buffer = data;
         }
-        
+
         out->data = (u8 *)malloc(out_length);
         if(NULL != out->data)
         {
