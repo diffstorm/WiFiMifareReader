@@ -99,3 +99,29 @@ bool RTC_Read_Memory(RTCMemory_t* data,u16 len)
   }
   return ret;
 }
+
+bool RTC_Write_Time_Memory(RTC_time_t* time,u16 len)
+{
+  bool ret = false;
+  if(512 < len)
+  {
+    if(0 !=system_rtc_mem_write(RTC_TIME_MEMORY,time,len))
+    {
+      ret = true;
+    }
+  }
+  return ret;
+}
+
+bool RTC_Read_Time_Memory(RTC_time_t* time,u16 len)
+{
+  bool ret = false;
+  if(512 < len)
+  {
+    if(0 !=system_rtc_mem_read(RTC_TIME_MEMORY,time,len))
+    {
+      ret = true;
+    }
+  }
+  return ret;
+}
