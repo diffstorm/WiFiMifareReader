@@ -309,8 +309,12 @@ void example()
     {
         if(false != Card_Decapsulate(&cardRaw, card))
         {
-            // Use the card object
-            // e.g. SearchInWhiteList(card.info.uid.uid, card.info.uid.length)
+            UID_t hw_uid = {0xCC}; // Assign hardware uid of card
+            if(false != Card_UIDCompare(&hw_uid, card))
+            {
+                // Use the card object
+                // e.g. SearchInWhiteList(card.info.uid.uid, card.info.uid.length)
+            }
         }
         Card_Destroy(card);
     }

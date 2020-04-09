@@ -32,6 +32,8 @@ PassingType_t;
 typedef struct __attribute__((packed)) // Wifi profile
 {
     bool active : 8;
+    u8 bssid[6]; // (STA)
+    bool bssid_active;
     char ssid[SSID_LEN_MAX];
     char psk[PSK_LEN_MAX];
     bool dhcp : 8; // (STA)
@@ -52,10 +54,13 @@ WiFiConfig_t;
 
 typedef struct __attribute__((packed))
 {
+    char addr[DEVICE_CFG_ADDR_LENGTH]; // pool.ntp.org
+    char addr2[DEVICE_CFG_ADDR_LENGTH];
+    char addr3[DEVICE_CFG_ADDR_LENGTH];
     u32 ip;
     u16 port;
     u8 period; // [hours]
-    u8 timezone; // [hours] - Turkey UTC+03:00
+    int8_t timezone; // [hours] - Turkey UTC+03:00
 }
 NTPSettings_t;
 

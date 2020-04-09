@@ -1,6 +1,9 @@
 #include "Device.h"
 #include "tools.h"
 
+// TODO : fix wifi config
+// TODO : add ntp settings
+
 bool Device_SetInfo(DeviceConfig_t *device, char *company, char *department, char *deviceName, char *deviceNote, char *systemPwd, char *webPwd, char *mDNSName)
 {
     bool ret = true;
