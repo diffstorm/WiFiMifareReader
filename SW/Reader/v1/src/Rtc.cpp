@@ -67,7 +67,7 @@ void RTC_Hexdump_Memory(char *desc, void *addr, int len)
   Serial.printf("  %s\n", buff);
 }
 
-bool RTC_Write_Memory(int addr, void *data, u16 len)
+bool RTC_Write_Memory(RTCMemory_t* data,u16 len)
 {
   bool ret = false;
   u16 padding = RTC_CalcPadding(len, RTC_MEMORY_BLOCK);
@@ -78,22 +78,21 @@ bool RTC_Write_Memory(int addr, void *data, u16 len)
   }
   else
   {
-    if (0 != system_rtc_mem_write(addr, data, len))
+    if (0 != system_rtc_mem_write(RTC_USER_DATA_ADDR, data, len))
     {
       yield();
       ret = true;
     }
   }
-
   return ret;
 }
 
-bool RTC_Read_Memory(int addr, void *data, u16 len)
+bool RTC_Read_Memory(RTCMemory_t* data,u16 len)
 {
   bool ret = false;
   u16 padding = RTC_CalcPadding(len, RTC_MEMORY_BLOCK);
   len += padding;
-  if (0 != system_rtc_mem_read(addr, data, len))
+  if (0 != system_rtc_mem_read(RTC_USER_DATA_ADDR, data, len))
   {
     yield();
     ret = true;
