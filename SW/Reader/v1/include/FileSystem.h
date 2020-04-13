@@ -1,34 +1,29 @@
-
-#ifndef _filesystem_H_
-#define _filesystem_H_
+#ifndef filesystem_H
+#define filesystem_H
 #include <FS.h>
 
-//File Names
-#define ROOT /
-#define LOG /log
-#define WHITELIST /whitelist
-
-//expanding macro into string
-#define STR_EXPAND(tok) #tok
-#define FILENAME(str) STR_EXPAND(str)
 
 
-void File_Init();
+bool File_Init();
 
-size_t File_Write(char *name, void *context, u32 length);
+bool File_Write(char *name, void *context, u32 length);
 
-size_t File_Read(char *name,void* context,u32 lenght);
+bool File_Read(char *name,void *context,u32 lenght, u32 pos);
+
+bool File_Append(char *name, void *context, u32 length);
+
+bool File_Remove(char *name);
 
 bool File_IsExists(char *name);
 
-size_t File_check_size(const char *filename);
+size_t File_check_size( char *filename);
 
-void File_delete_File(const char *filename);
+bool File_delete_File( char *filename);
 
 void File_get_List();
 
-size_t File_get_rowCount(char* name,void* context);
+bool File_rename(char* name,char* name1);
 
-void File_record_display(char* name,void* context,uint32_t size);
+bool File_update(char *name,void* context,u32 length,u32 pos);
 
 #endif

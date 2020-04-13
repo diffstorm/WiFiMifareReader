@@ -1,124 +1,154 @@
-#include <filesystem.h>
+#include <FileSystem.h>
 
-void File_Init()
+
+bool File_Init()
 {
+    bool ret=false;
     if (SPIFFS.begin())
     {
-        Serial.println("SPIFSS begin...");
-        SPIFFS.format();
+        ret=false;
     }
     else
     {
-        Serial.print("SPISS not begin...");
+        ret=true;
     }
+    return ret;
 }
 
-size_t File_Write(char *name, void *context, u32 length)
+
+bool File_Append(char *name, void *context, u32 length)
 {
-    File f = SPIFFS.open(name, "a");
+   
+    bool ret=false;
+    File f = SPIFFS.open(name, "a");   
+    if (NULL != f)
+    {
+        
+        
+        f.write((u8 *)context, length);
+        f.close();
+        ret=true;
+    }
+    else
+    {
+        ret=false;
+    }
+    return ret;
+}
+
+bool File_Write(char *name, void *context, u32 length)
+{
+   
+    bool ret=false;
+    File f = SPIFFS.open(name, "w");
+    
     if (NULL != f)
     {
         f.write((u8 *)context, length);
         f.close();
+        ret=true;
     }
     else
     {
-        Serial.println("dosya acilamadi");
+        ret=false;
     }
+    return ret;
 }
 
-size_t File_Read(char *name, void *context, u32 lenght)
+bool File_rename(char* name,char* name1)
 {
-    u32 pos = 0;
-    u32 len = 0;
+    return SPIFFS.rename(name, name1);     
+}
+
+bool File_Read(char* name,void* context,u32 length,u32 pos)
+{
+    bool ret=false;
     File f = SPIFFS.open(name, "r");
-    if (NULL != f)
+    if(!f)
     {
-        if (0 == strcmp(name, FILENAME(WHITELIST))
-        {
-            len = (lenght) / (sizeof(whitelist_t));
-            whitelist_t *whitelist = (whitelist_t *)context;
-            for (size_t i = 0; i < len; i++)
-            {
-                f.seek(pos, SeekMode::SeekSet);
-                f.read((u8 *)whitelist, sizeof(whitelist_t));
-                pos += sizeof(whitelist_t);
-            }
-        }
-        if (0 == strcmp(name, FILENAME(LOG)))
-        {
-            len = (lenght) / (sizeof(log_info_t));
-            log_info_t *loginfo = (log_info_t *)context;
-            for (size_t i = 0; i < len; i++)
-            {
-                f.seek(pos, SeekMode::SeekSet);
-                f.read((u8 *)loginfo, sizeof(log_info_t));
-                pos += sizeof(log_info_t);
-            }
-        }
+        ret=false;
     }
+
     else
     {
-        Serial.println("dosya acilamadi");
+        
+        f.seek(pos, SeekMode::SeekSet);
+        f.read((u8*)context,length);
+        f.close();
+        ret=true;
     }
+    return ret;
+    
+}  
+
+bool File_update(char *name,void* context, u32 length,u32 pos)
+{
+    bool ret=false;
+    File f = SPIFFS.open(name, "r+");
+    if(!f)
+    {
+        ret=false;
+    }
+
+    else
+    {
+        
+
+        f.seek(((f.size()-length)),SeekMode::SeekSet);  //(f.size()-length)
+
+        f.read((uint8_t*)context,length);
+        f.seek(pos*length,SeekMode::SeekSet); 
+        f.write((u8*)context,length); 
+        //bool a=f.truncate(f.size()-length);
+        f.close();
+        ret=true;
+    }   
+    return ret;
 }
 
-void File_delete_File(const char *name)
+
+
+bool File_IsExists(char *name)
 {
-    File f = SPIFFS.open(name,"r+");
-    if(NULL != name)
-    {
-        if(0!= SPIFFS.remove(name))
-        {
-            Serial.printf("Belirtilen %s dosyası silindi\n",name);
-        }
-    }
-    else
-    {
-        Serial.printf("Belirtilen %s dosyası bulunamadı\n",name);
-    }
+    return SPIFFS.exists(name);
 }
 
-size_t File_get_rowCount(char* name,void* context)
+size_t File_check_size( char *filename)
 {
-     File f= SPIFFS.open(name,"r");
-    if(NULL != f)
+    File f =SPIFFS.open(filename,"r");
+    return f.size();
+}
+
+bool File_delete_File( char *filename)
+{
+    bool ret=true;
+    if (0 != SPIFFS.remove(filename))
     {
-        if(0 == strcmp(name,FILENAME(WHITELIST)))
-        {
-            return f.size() / (sizeof(whitelist_t));
-        }
-        if(0 == strcmp(name,FILENAME(LOG)))
-        {
-            return f.size() / (sizeof(log_info_t));
-        }
+        ret=false;
     }
     else
     {
-        return -1;
+        ret=true;
     }
+    return ret;
 }
+
 
 void File_get_List()
 {
-    Dir dir;
-    dir = SPIFFS.openDir("/");
-    while(dir.next())
+    String path="/";
+    Dir dir =  SPIFFS.openDir(path);
+    String output = "[";
+    while (dir.next())
     {
-        Serial.println(dir.fileName().substring(1));
+       File entry = dir.openFile("r");
+       if(output !="[")
+       {
+           output+= ",";
+       }
+       output+=String(entry.name()).substring(1);       //entry.name() --> /test veriyor. / işaretini atmak için substring kullanıyoruz.
+       entry.close();
     }
-}
-
-size_t File_check_size(const char *name)
-{
-    File f= SPIFFS.open(name,"r");
-    if(NULL != f)
-    {
-        return f.size();
-    }
-    else
-    {
-        Serial.printf("belirtilen %s dosyasi bulunamadı",name);
-    }
-    
+    output+="]"; 
+    Serial.println(output);
 }
