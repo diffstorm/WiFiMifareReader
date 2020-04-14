@@ -18,15 +18,27 @@ typedef struct __attribute__((packed))
   unsigned long epocTime;
 }RTC_time_t;
 
+typedef enum
+{
+  WRITE_ERROR,
+  WRITE_OK,
+  READ_ERROR,
+  READ_OK,
+  UPDATE_OK,
+  UPDATE_ERROR
+}RTC_status_t;
+
 
 u16 RTC_CalcPadding(u16 size, u16 mult);
 
-extern  bool RTC_Write_Memory(RTCMemory_t* data,u16 len);
+extern  RTC_status_t RTC_Write_Memory(RTCMemory_t* data,u16 len);
 
-extern bool RTC_Read_Memory(RTCMemory_t* data,u16 len); 
+extern RTC_status_t RTC_Read_Memory(RTCMemory_t* data,u16 len); 
 
-extern bool RTC_Write_Time_Memory(RTCMemory_t* data,u16 len); 
+extern RTC_status_t RTC_Write_Time_Memory(RTCMemory_t* data,u16 len); 
 
-extern bool RTC_Read_Time_Memory(RTCMemory_t* data,u16 len); 
+extern RTC_status_t RTC_Read_Time_Memory(RTCMemory_t* data,u16 len); 
+
+extern RTC_status_t RTC_Update_Time_Memory(unsigned long epochTime,unsigned long deepSleepTime);
 
 #endif
