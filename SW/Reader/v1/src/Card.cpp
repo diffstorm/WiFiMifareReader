@@ -275,7 +275,7 @@ void example()
     //-------------------------------------------------------------
 
     // Create & Write a card object into card
-    card = Card_Create();
+    card = Card_Create();                          
     if(NULL != card)
     {
         // Fill the card object

@@ -39,6 +39,6 @@ extern RTC_status_t RTC_Write_Time_Memory(RTCMemory_t* data,u16 len);
 
 extern RTC_status_t RTC_Read_Time_Memory(RTCMemory_t* data,u16 len); 
 
-extern RTC_status_t RTC_Update_Time_Memory(unsigned long epochTime,unsigned long deepSleepTime);
+extern RTC_status_t RTC_Update_Time_Memory();
 
 #endif

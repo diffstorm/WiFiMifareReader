@@ -5,6 +5,8 @@ extern "C"
 #include "user_interface.h"
 }
 
+unsigned long epochRTC;
+
 u16 RTC_CalcPadding(u16 size, u16 mult)
 {
   u16 padding = size % mult;
@@ -98,48 +100,103 @@ RTC_status_t RTC_Read_Memory(RTCMemory_t *data, u16 len)
   return status;
 }
 
-/*bool RTC_Write_Time_Memory(RTC_time_t *time, u16 len)
-{
-  bool ret = false;
-  if (512 < len)
-  {
-    if (0 != system_rtc_mem_write(RTC_TIME_MEMORY, time, len))
-    {
-      ret = true;
-    }
-  }
-  return ret;
-}
 
-bool RTC_Read_Time_Memory(RTC_time_t *time, u16 len)
-{
-  bool ret = false;
-  if (512 < len)
-  {
-    if (0 != system_rtc_mem_read(RTC_TIME_MEMORY, time, len))
-    {
-      ret = true;
-    }
-  }
-  return ret;
-}   */
-
-RTC_status_t RTC_Update_Time_Memory(unsigned long* epochTime, unsigned long deepSleepTime)
+RTC_status_t RTC_Update_Time_Memory()
 {
   RTC_status_t status = UPDATE_ERROR;
   unsigned long epochRTC;
-  if(0 != system_rtc_mem_write(RTC_TIME_MEMORY,epochTime, sizeof(*epochTime)))
+  if(0 != system_rtc_mem_write(RTC_TIME_MEMORY,&epochRTC, sizeof(epochRTC)))
   {
+    epochRTC++;
     status = WRITE_OK;
     if(0 !=  system_rtc_mem_read(RTC_TIME_MEMORY, &epochRTC, sizeof(epochRTC)))
     {
       status = READ_OK;
-      *epochTime = epochRTC + deepSleepTime;
-      if(0 != system_rtc_mem_write(RTC_TIME_MEMORY,epochTime, sizeof(*epochTime)))
-      {
-        status = UPDATE_OK;
-      }
     }
+     status = UPDATE_OK;
   }
   return status;
 }
+
+
+/* 
+#define RTC_UTC_ADDR 65
+#define RTC_UTC_MILISECOND_ADDR 100
+
+const long utcOffsetInSeconds = 3600*3;
+
+void updateEpochTimeFromRTC();
+void epochMillisRTC();
+
+Ticker timer1(epochMillisRTC,1,0,MILLIS);
+Ticker timer2(updateEpochTimeFromRTC,10,0 ,MILLIS);
+
+unsigned long epochRTC = 1586969413;
+unsigned long epocMillishRTC = 0;
+
+
+
+bool RTC_Write_Memory(uint16_t address,unsigned long* data,size_t len)
+{
+  bool ret = false;
+
+  if (512 < len)
+  {
+    Serial.printf("yeterli hafiza kalmamistir\n");
+  }
+  else
+  {
+    if (0 != system_rtc_mem_write(address, data, len))
+    {
+      yield();
+      ret = true;
+    }
+  }
+  return ret;
+}
+
+bool RTC_Read_Memory(uint16_t address,unsigned long* data,size_t len)
+{
+  bool ret = false;
+  if (0 != system_rtc_mem_read(address, data, len))
+  {
+    yield();
+    ret = true;
+  }
+  return ret;
+}
+
+
+
+void updateEpochTimeFromRTC()
+{
+  RTC_Write_Memory(RTC_UTC_ADDR,&epochRTC,sizeof(epochRTC));
+  if((epocMillishRTC / 1000) > 0)
+  {
+    epochRTC += epocMillishRTC/1000;
+    epocMillishRTC= epocMillishRTC % 1000;                   
+    RTC_Write_Memory(RTC_UTC_MILISECOND_ADDR,&epocMillishRTC,sizeof(epocMillishRTC));
+  } 
+}
+
+void epochMillisRTC()
+{
+  epocMillishRTC++;
+}
+
+
+void setup()
+{
+  RTC_Write_Memory(RTC_UTC_MILISECOND_ADDR,&epocMillishRTC,sizeof(epocMillishRTC));
+
+  timer2.start();
+  timer1.start();
+ 
+}
+
+void loop()
+{
+  timer1.update();
+  timer2.update(); 
+}
+*/
