@@ -1,6 +1,6 @@
 #include<whitelist.h>
 #include<FILEsystem.h>
-
+#include<tools.h>
 #define CRCUID 0xDEAD
 #define MAX_UID_SIZE 500
 #define MAX_NAMES_SIZE 2000
@@ -18,7 +18,7 @@ char *names4 = "/names4";
 char *uidFILE5 = "/uid5";
 char *names5 = "/names5";
 
-
+/*
 //char *tempFILE2 = "/temp2";
 const u16 crc16t[256] =
 {
@@ -71,7 +71,7 @@ u16 CRC16(u16 crc, unsigned char *i, unsigned int l)
 
     return crc;
 }
-
+*/
 
 u16 crcBuf[250];
 u16 buf[1];
