@@ -6,6 +6,7 @@
 typedef enum
 {
     task_idle = 0, // User to add tasks here
+    task_RTC,
     task_Card,
     task_WiFi,
     task_UDP,

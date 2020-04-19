@@ -14,6 +14,7 @@
 
 u32 taskperiods[SCHEDULER_TASK_SIZE] =
 {
+    1, // task_RTC
     200, // task_Card
     4000,// task_WiFi
     100, // task_UDP

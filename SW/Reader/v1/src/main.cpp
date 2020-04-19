@@ -4,6 +4,9 @@
 #include "Buzzer.h"
 #include "IR.h"
 #include "tools.h"
+#include "RTC.h"
+#include "Scheduler.h"
+#include "Sleep.h"
 
 extern "C" {
 #include "user_interface.h"
@@ -33,6 +36,9 @@ void setup()
     Serial.setDebugOutput(true);
     Serial.flush();
 #endif
+    RTC_Init();
+    Scheduler_Init(false);
+    //Scheduler_Call(task_RTC, &RTC_Handler);
     Reader_Init();
 #ifdef IR_CARD_DETECT
     IR_Init();
@@ -49,7 +55,18 @@ void loop()
 #ifdef WDT
     ESP.wdtFeed();
 #endif
+    Scheduler_Handler();
 
+    if(Scheduler_GetEvent(task_RTC))
+    {
+        RTC_Handler();
+    }
+    
     BZR_Handler();
     delay(100);
+
+    
+    #ifdef LOW_POWER_MODE
+    Sleep_CPU(250);
+    #endif
 }
