@@ -101,7 +101,7 @@ void WH_setFileName()
         choosenUid = uidFILE4;
         choosenNames = names4;
     }
-    else(FILE_check_size(uidFILE5)<MAX_UID_SIZE)
+    else
     {
         choosenUid = uidFILE5;
         choosenNames = names5;
