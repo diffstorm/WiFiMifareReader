@@ -275,7 +275,6 @@ bool WH_delete(byte uid[], size_t len)
 
     for(size_t i = 0; i < FILE_check_size(crcUid) / sizeof(u16); i++)
     {
-
         if(crcBuf[i] == crc1)
         {
             pos=i;
@@ -300,20 +299,22 @@ bool WH_delete(byte uid[], size_t len)
                 WH_getLastFileName();
                 pos = (i  % MAX_RECORD_NUMBER) * sizeof(wl.uid.uid);
                 WH_updateFile(LastUid, choosenUid, &wl, wl.uid.length, pos); 
-                u8 *ptr;
-                ptr=(u8 *) malloc(MAX_UID_SIZE);   //sizeof(choosenUid) ?
-                FILE_Read(choosenUid,ptr,FILE_check_size(choosenUid)-sizeof(wl.uid.uid),0);
-                FILE_Write(choosenUid,ptr,FILE_check_size(choosenUid)-sizeof(wl.uid.uid));
-                free(ptr);
+
+                u8 *ptr2;
+                ptr2(u8 *) malloc(MAX_UID_SIZE);
+                FILE_Read(LastUid,ptr2,FILE_check_size(choosenUid)-sizeof(wl.uid.uid),0);
+                FILE_Write(LastUid,ptr2,FILE_check_size(choosenUid)-sizeof(wl.uid.uid));
+                free(ptr2);
                 ///////////////////////////////////////////////////
                 
                 pos = (i * (sizeof(wl.name) + sizeof(wl.surname))) % MAX_RECORD_NUMBER; 
                 WH_updateFile(LastNames, choosenNames, &wl, (sizeof(wl.name) + sizeof(wl.surname)), pos);
-                u8 *ptr1;
-                ptr1=(u8 *) malloc(MAX_NAMES_SIZE);   //sizeof(choosennames) ?
-                FILE_Read(choosenNames,ptr1,FILE_check_size(choosenNames)-sizeof(wl.uid.uid),0);
-                FILE_Write(choosenNames,ptr1,FILE_check_size(choosenNames)-sizeof(wl.uid.uid));
-                free(ptr1);
+               
+                u8 *ptr3;
+                ptr3 = (u8 *) malloc(MAX_NAMES_SIZE);
+                FILE_Read(LastNames,ptr3,FILE_check_size(choosenNames)-(sizeof(wl.name) + sizeof(wl.surname),0);
+                FILE_Write(LastNames,ptr3,FILE_check_size(choosenNames)-(sizeof(wl.name) + sizeof(wl.surname));
+                free(ptr3);
 
                 ret = true;
                 break;
