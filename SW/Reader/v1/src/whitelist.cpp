@@ -1,6 +1,7 @@
 #include<whitelist.h>
-#include<FILEsystem.h>
-#include<tools.h>
+#include<FileSystem.h>
+#include <tools.h>
+
 #define CRCUID 0xDEAD
 #define MAX_UID_SIZE 500
 #define MAX_NAMES_SIZE 2000
@@ -18,9 +19,9 @@ char *names4 = "/names4";
 char *uidFILE5 = "/uid5";
 char *names5 = "/names5";
 
-/*
+
 //char *tempFILE2 = "/temp2";
-const u16 crc16t[256] =
+/*const u16 crc16t[256] =
 {
     0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,
     0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF,
@@ -77,6 +78,8 @@ u16 crcBuf[250];
 u16 buf[1];
 char* choosenUid;
 char* choosenNames;
+char* LastUid;
+char* LastNames;
 
 void WH_setFileName()
 {
@@ -108,9 +111,40 @@ void WH_setFileName()
     } 
 
 }
-void WH_getFileName(u32 pos)
+void WH_getLastFileName()
 {
     u8 i=0;
+    u32 posEnd = FILE_check_size(crcUid) - sizeof(whitelist_UID_t) - 1;
+    i = posEnd / MAX_RECORD_NUMBER;
+    switch (i)
+    {
+    case 0:
+        LastUid = uidFILE1;
+        LastNames = names1;
+        break;
+    case 1:
+        LastUid = uidFILE2;
+        LastNames = names2;
+        break;
+    case 2:
+        LastUid = uidFILE3;
+        LastNames = names3;
+        break;
+    case 3:
+        LastUid = uidFILE4;
+        LastNames = names4;
+        break;
+    default:
+        LastUid = uidFILE5;
+        LastNames = names5;
+        break;
+    }
+}
+
+void WH_getFileName(u32 pos)
+{
+    
+    u8 i=0; 
     i=pos/MAX_RECORD_NUMBER;
     switch (i)
     {
@@ -135,6 +169,42 @@ void WH_getFileName(u32 pos)
         choosenNames = names5;
         break;
     }
+}
+
+
+bool WH_updateFile(char *name, char *name2, void *context, u32 length, u32 pos)  // nameden oku name2 ye yaz (name son dosyanın ismi olacak)
+{
+    bool ret = false;
+    File f = SPIFFS.open(name, "r+");
+
+    if(NULL != f)
+    {
+
+        if(true==f.seek((f.size() - length),SeekMode::SeekSet))
+        {
+            
+            if(true==FILE_read_internal(&f, context, length))
+            {
+                f.close();
+                File f1 = SPIFFS.open(name2, "r+");
+                if(NULL != f1)
+                {
+                    if(true==f1.seek(pos*length, SeekMode::SeekSet))
+                    {
+                        if(true==FILE_write_internal(&f1, context,length))
+                        {
+                            f1.close();  
+                            ret=true;
+                        }
+                    }
+                }
+            }
+        }
+
+    
+    }
+
+    return ret;
 }
 
 void WH_add(whitelist_t wl)
@@ -167,9 +237,9 @@ bool WH_searchUID(byte uid[], size_t len)
 
         if(crcBuf[i] == crc1)
         {
-            
-            pos = (i * sizeof(wl.uid.uid)) % MAX_RECORD_NUMBER;
+            pos=i;
             WH_getFileName(pos);
+            pos = (i  % MAX_RECORD_NUMBER) * sizeof(wl.uid.uid);
             FILE_Read(choosenUid, &wl, wl.uid.length, pos);
             
             if(0 == memcmp(wl.uid.uid, uid, wl.uid.length))
@@ -192,10 +262,12 @@ bool WH_delete(byte uid[], size_t len)
     bool ret = false;
     u16 crc1;
     u32 pos = 0;
+    
+    whitelist_t wl;
 
     crc1 = CRC16(CRCUID, (u8 *)uid, (unsigned int)len);
 
-    whitelist_t wl;
+    
     Serial.println(FILE_check_size(crcUid));
     FILE_Read(crcUid, &crcBuf, FILE_check_size(crcUid), 0);
 
@@ -206,9 +278,11 @@ bool WH_delete(byte uid[], size_t len)
 
         if(crcBuf[i] == crc1)
         {
-
-            pos = i * sizeof(wl.uid.uid);
+            pos=i;
             WH_getFileName(pos);
+
+            pos = (i  % MAX_RECORD_NUMBER) * sizeof(wl.uid.uid);
+            
             FILE_Read(choosenUid, &wl, wl.uid.length, pos);
 
             if(0 == memcmp(wl.uid.uid, uid, wl.uid.length))
@@ -221,16 +295,20 @@ bool WH_delete(byte uid[], size_t len)
                 FILE_Read(crcUid, &crcBuf, FILE_check_size(crcUid), 0);
 
                 ///////////////////////////////////////
-                pos = (i * sizeof(wl.uid.uid)) % MAX_RECORD_NUMBER;            
-                FILE_update(choosenUid, &wl, wl.uid.length, pos); 
+                
+                WH_getFileName(pos);  
+                WH_getLastFileName();
+                pos = (i  % MAX_RECORD_NUMBER) * sizeof(wl.uid.uid);
+                WH_updateFile(LastUid, choosenUid, &wl, wl.uid.length, pos); 
                 u8 *ptr;
                 ptr=(u8 *) malloc(MAX_UID_SIZE);   //sizeof(choosenUid) ?
                 FILE_Read(choosenUid,ptr,FILE_check_size(choosenUid)-sizeof(wl.uid.uid),0);
                 FILE_Write(choosenUid,ptr,FILE_check_size(choosenUid)-sizeof(wl.uid.uid));
                 free(ptr);
                 ///////////////////////////////////////////////////
+                
                 pos = (i * (sizeof(wl.name) + sizeof(wl.surname))) % MAX_RECORD_NUMBER; 
-                FILE_update(choosenNames, &wl, (sizeof(wl.name) + sizeof(wl.surname)), pos);
+                WH_updateFile(LastNames, choosenNames, &wl, (sizeof(wl.name) + sizeof(wl.surname)), pos);
                 u8 *ptr1;
                 ptr1=(u8 *) malloc(MAX_NAMES_SIZE);   //sizeof(choosennames) ?
                 FILE_Read(choosenNames,ptr1,FILE_check_size(choosenNames)-sizeof(wl.uid.uid),0);

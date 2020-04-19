@@ -20,9 +20,11 @@ typedef struct __attribute__((packed))
 whitelist_t;
 
 u16 CRC16(u16 crc, unsigned char *i, unsigned int l);
+bool WH_updateFile(char *name, char *name2, void *context, u32 length, u32 pos);
 void WH_add(whitelist_t whl);
 bool WH_delete(byte uid[], size_t len);
 bool WH_searchUID(byte uid[], size_t len);
 void WH_setFileName();
 void WH_getFileName(u32 pos);
+void WH_getLastFileName();
 #endif
