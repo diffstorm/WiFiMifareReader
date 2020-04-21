@@ -15,12 +15,10 @@ void Reader_Prepare_Key(char systemPwd[DEVICE_CFG_NAME_LENGTH])
     }
 }
 
-
-
 //set key to mifare card 
 bool Reader_Mifare_SetKeys(byte command, MFRC522::MIFARE_Key *oldKeyA, MFRC522::MIFARE_Key *oldKeyB,
-                    MFRC522::MIFARE_Key *newKeyA, MFRC522::MIFARE_Key *newKeyB,
-                    int sector)
+                           MFRC522::MIFARE_Key *newKeyA, MFRC522::MIFARE_Key *newKeyB,
+                           int sector)
 {
     byte trailerBlock = sector * 4 + 3;
     byte buffer[18];
@@ -79,7 +77,6 @@ bool Reader_IsMifare()
     MFRC522::PICC_Type piccType = mfrc522.PICC_GetType(mfrc522.uid.sak);
     if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI && piccType != MFRC522::PICC_TYPE_MIFARE_1K && piccType != MFRC522::PICC_TYPE_MIFARE_4K)
     {
-        //Serial.println(F("Not a Mifare Card."));
         ret = false;
     }
     else
@@ -153,23 +150,20 @@ READER_status_t Reader_WriteBlock(int blockNumber, byte arrayAddress[])
     READER_status_t ret = WRITE_OK;
     MFRC522::StatusCode status;
 
-    if (0 != Reader_Is_Trailer_Block(blockNumber))
+    if (0 == Reader_Is_Trailer_Block(blockNumber))
     {
-        status = mfrc522.MIFARE_Write(blockNumber, arrayAddress, CARD_ROW_SIZE);
-        if (status != MFRC522::STATUS_OK)
-        {
-            Serial.print("MIFARE_Write() failed: ");
-            Serial.println(mfrc522.GetStatusCodeName(status));
-            ret = WRITE_ERROR;
-        }
-        else
-        {
-            ret = WRITE_OK;
-        }
+        blockNumber++;
+    }
+    status = mfrc522.MIFARE_Write(blockNumber, arrayAddress, CARD_ROW_SIZE);
+    if (status != MFRC522::STATUS_OK)
+    {
+        Serial.print("MIFARE_Write() failed: ");
+        Serial.println(mfrc522.GetStatusCodeName(status));
+        ret = WRITE_ERROR;
     }
     else
     {
-        blockNumber++;
+        ret = WRITE_OK;
     }
     return ret;
 }
