@@ -15,6 +15,8 @@ void Reader_Prepare_Key(char systemPwd[DEVICE_CFG_NAME_LENGTH])
     }
 }
 
+
+
 //set key to mifare card 
 bool Reader_Mifare_SetKeys(byte command, MFRC522::MIFARE_Key *oldKeyA, MFRC522::MIFARE_Key *oldKeyB,
                     MFRC522::MIFARE_Key *newKeyA, MFRC522::MIFARE_Key *newKeyB,
