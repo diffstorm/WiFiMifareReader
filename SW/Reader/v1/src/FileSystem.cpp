@@ -1,5 +1,5 @@
-#include <filesystem.h>
-
+#include "filesystem.h"
+#include "DebugLog.h"
 
 bool FILE_Init()
 {
@@ -47,7 +47,7 @@ bool FILE_Init()
         SPIFFS.format();      
         ESP.restart();        
     }
-
+    LOGi("[FILESYSTEM] init result: ", ret);
     return ret;    
 }
 
@@ -63,6 +63,7 @@ bool FILE_write_internal(File *f, void *context, u32 length)
     u32 offset = 0;
     u32 written = 0;
     u8 error = 3;
+    bool debugRet = false;
 
     while(offset < length && error > 0)
     {
@@ -77,7 +78,12 @@ bool FILE_write_internal(File *f, void *context, u32 length)
             error--;
         }
     }
-
+ 
+    if(offset == length)
+    {
+        debugRet = true;
+    }
+    LOGi("[FILESYSTEM] write_internal result: ", debugRet);
     return (offset == length);
 }
 
@@ -93,7 +99,8 @@ bool FILE_read_internal(File *f, void *context, u32 length)
     u32 offset = 0;
     u32 read = 0;
     u8 error = 3;
-    
+    bool debugRet = false;
+
     while(offset < length && error > 0)
     {
         read = f->read((u8 *)context + offset , length - offset);  
@@ -108,6 +115,11 @@ bool FILE_read_internal(File *f, void *context, u32 length)
         }
     }
 
+    if(offset == length)
+    {
+        debugRet = true;
+    }
+    LOGi("[FILESYSTEM] read_internal result: ", debugRet);
     return (offset == length);    
 }
 
@@ -136,6 +148,7 @@ bool FILE_Append(char *name, void *context, u32 length)
         f.close(); 
     }
 
+    LOGi("[FILESYSTEM] Append result: ", ret);
     return ret;
 }
 
@@ -162,7 +175,7 @@ bool FILE_Write(char *name, void *context, u32 length)
 
         f.close(); 
     }
-
+    LOGi("[FILESYSTEM] Write result: ", ret);
     return ret;
 }
 
@@ -197,6 +210,7 @@ bool FILE_Read(char *name, void *context, u32 length, u32 pos)
         f.close();    
     }
 
+    LOGi("[FILESYSTEM] Read result: ", ret);
     return ret;
 
 }
@@ -228,7 +242,7 @@ bool FILE_update(char *name, void *context, u32 length, u32 pos)
 
     f.close();  
     }
-
+    LOGi("[FILESYSTEM] Update result: ", ret);
     return ret;
 }
 
@@ -267,6 +281,7 @@ size_t FILE_get_dir_size(char* dirPath)
       size += dir.fileSize();  
     }
 
+    LOGd("[FILESYSTEM] directory size result: ", size);
     return size;
 }
 
@@ -280,6 +295,7 @@ size_t FILE_system_available_size()
         available = FSInfo.totalBytes - FSInfo.usedBytes;
     }
 
+    LOGd("[FILESYSTEM] available filesystem size result: ", available);
     return available;
 }
 
@@ -298,5 +314,6 @@ size_t FILE_get_size(char *name)
     File f = SPIFFS.open(name, "r");
     size_t ret = f.size();
     f.close();
+    LOGd("[FILESYSTEM] file size result: ", ret);
     return ret;
 }
