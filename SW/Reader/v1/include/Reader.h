@@ -2,25 +2,54 @@
 #define __READER_H__
 
 #include "CardConfig.h"
-#include <MFRC522.h>
 
+#define SECTOR_NUMBER   16
+#define BLOCK_NUMBER (SECTOR_NUMBER)*(4)
 #define KEY_SIZE 6
+
+const char DEFAULT_KEY_A[6] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+const char DEFAULT_KEY_B[6] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+const char DEFAULT_ACCESS_BITS[4] = {0x00};
+
+#define KEY_A_POSITION 0
+#define ACCESS_BITS_POSITION 6
+#define KEY_B_POSITION 10
 
 typedef enum
 {
-    READ_OK,
-    WRITE_OK,
-    NOTFOUND,
-    AUTH_ERROR,
-    CAN_NOT_READ_UID,
-    UID_LEN_ERROR,
-    READ_ERROR,
-    WRITE_ERROR
-} READER_status_t;
+    IDLE,
+    CARD_SET_KEY,
+    CARD_READ,
+    CARD_WRITE,
+    CARD_FORMAT,
+    NONE
+}Reader_Task_t;
 
-void Reader_Prepare_Key(char systemPwd[]);
+typedef enum
+{
+    AUTH_KEY_A = 0x60,
+    AUTH_KEY_B = 0x61
+}AUTH_KEYS_type;
 
-bool Reader_Mifare_SetKeys(byte command, MFRC522::MIFARE_Key *oldKeyA, MFRC522::MIFARE_Key *oldKeyB);
+typedef struct {
+	byte keyByte[KEY_SIZE];
+} Mifare_Auth_Key;
+
+void Reader_Prepare_Key(char key[KEY_SIZE]);
+
+bool Reader_Card_Authenticate(AUTH_KEYS_type key_type, int trailerBlock, Mifare_Auth_Key *key);
+
+bool Reader_Mifare_SetKeys(Mifare_Auth_Key* oldkeyA, Mifare_Auth_Key* oldkeyB, Mifare_Auth_Key *newKeyA,Mifare_Auth_Key *newKeyB, int sector);
+
+bool Reader_Card_Format();
+
+bool Reader_WriteBlock(u8 blockNumber, byte data[CARD_ROW_SIZE]);
+
+bool Reader_Is_Trailer_Block(int blockNumber);
+
+bool Reader_ReadBlock(u8 blockNumber, u8 data[CARD_ROW_SIZE]);
+
+UID_t* Reader_Get_Card_Uid(UID_t* uid);
 
 void Reader_Init();
 
@@ -34,21 +63,8 @@ bool Reader_HasCard();
 
 bool Reader_IsRead_Card();
 
-
-
-bool Reader_Card_Authenticate(byte command, int trailerBlock, MFRC522::MIFARE_Key *key);
-
-bool Reader_Is_Trailer_Block(int blockNumber);
-
-READER_status_t Reader_ReadBlock(int blockNumber,byte block[CARD_ROW_SIZE],u8 len);
-
-READER_status_t Reader_WriteBlock(int blockNumber, byte arrayAddress[CARD_ROW_SIZE]);
-
-u8 Reader_Get_Trailer_Block(int blockNumber);
-
-
 void READER_stop();
 
-bool READER_handler();
+u8 Reader_Get_Trailer_Block(int blockNumber);
 
 #endif // __READER_H__

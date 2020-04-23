@@ -1,48 +1,63 @@
 #include <Reader.h>
 #include <DeviceConfig.h>
-
+#include <DebugLog.h>
+#include <WString.h>
+#include <MFRC522.h>
 #define RST_PIN 5
 #define SS_PIN 4
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 MFRC522::MIFARE_Key key;
 
-void Reader_Prepare_Key(char systemPwd[DEVICE_CFG_NAME_LENGTH])
+//okuma veya yazma sonucu dönen enumları string olarak döndürür.
+char *Reader_Get_Status(MFRC522::StatusCode status, char *logMessage)
+{
+    String logmMessage = "";
+    logmMessage = mfrc522.GetStatusCodeName(status);
+    strcpy(logMessage, logmMessage.c_str());
+    return logMessage;
+}
+
+void Reader_Prepare_Key(Mifare_Auth_Key *key, char _key[KEY_SIZE])
 {
     for (byte i = 0; i < 6; i++)
     {
-        key.keyByte[i] = systemPwd[i];
+        key->keyByte[i] = _key[i];
     }
 }
 
-//set key to mifare card 
-bool Reader_Mifare_SetKeys(byte command, MFRC522::MIFARE_Key *oldKeyA, MFRC522::MIFARE_Key *oldKeyB,
-                           MFRC522::MIFARE_Key *newKeyA, MFRC522::MIFARE_Key *newKeyB,
-                           int sector)
+//set key to mifare card
+
+bool Reader_Mifare_SetKeys(Mifare_Auth_Key *oldkeyA, Mifare_Auth_Key *oldkeyB, Mifare_Auth_Key *newKeyA, Mifare_Auth_Key *newKeyB, int sector)
 {
+    MFRC522::StatusCode status;
+    bool ret = false;
     byte trailerBlock = sector * 4 + 3;
-    byte buffer[18];
-    byte size = sizeof(buffer);
-    if (command == MFRC522::PICC_CMD_MF_AUTH_KEY_A)
+    byte buffer[16] = {0};
+
+    LOG("Authenticating using key A");
+    if (0 != Reader_Card_Authenticate(AUTH_KEY_A, trailerBlock, oldkeyA))
     {
-        if (0 != Reader_Card_Authenticate(command, trailerBlock, oldKeyA) || 0 != Reader_Card_Authenticate(command, trailerBlock, oldKeyB))
+        if (newKeyA != NULL)
         {
-            if (newKeyA != nullptr || newKeyB != nullptr)
-            {
-                for (byte i = 0; i < MFRC522::MF_KEY_SIZE; i++)
-                {
-                    if (newKeyA != nullptr)
-                    {
-                        buffer[i] = newKeyA->keyByte[i];
-                    }
-                    if (newKeyB != nullptr)
-                    {
-                        buffer[i + 10] = newKeyB->keyByte[i];
-                    }
-                }
-            }
+            memcpy(buffer, newKeyA->keyByte, 6);
         }
     }
+
+    LOG("Authenticating using key B");
+    if (0 != Reader_Card_Authenticate(AUTH_KEY_B, trailerBlock, oldkeyB))
+    {
+        if (newKeyB != NULL)
+        {
+            memcpy(buffer + KEY_B_POSITION, newKeyB->keyByte, 6);
+        }
+    }
+    status = mfrc522.MIFARE_Write(trailerBlock, buffer, CARD_ROW_SIZE);
+    if (status == MFRC522::STATUS_OK)
+    {
+        ret = true;
+    }
+    return ret;
 }
 
 void Reader_Init()
@@ -122,82 +137,184 @@ bool Reader_Is_Trailer_Block(int blockNumber)
     return ret;
 }
 
-bool Reader_Card_Authenticate(byte command, int trailerBlock, MFRC522::MIFARE_Key *key)
+bool Reader_Card_Authenticate(AUTH_KEYS_type key_type, int trailerBlock, Mifare_Auth_Key *key)
 {
     bool ret = false;
-    if (command == MFRC522::PICC_CMD_MF_AUTH_KEY_A)
+    if (AUTH_KEY_A == key_type)
     {
-        if (MFRC522::STATUS_OK == mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, trailerBlock, key, &(mfrc522.uid)))
-            ;
+        if (MFRC522::STATUS_OK == mfrc522.PCD_Authenticate(AUTH_KEY_A, trailerBlock, (MFRC522::MIFARE_Key *)key, &(mfrc522.uid)))
         {
             ret = true;
         }
     }
-    if (command == MFRC522::PICC_CMD_MF_AUTH_KEY_B)
+    if (AUTH_KEY_B == key_type)
     {
-        if (MFRC522::STATUS_OK == mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_B, trailerBlock, key, &(mfrc522.uid)))
-            ;
+        if (MFRC522::STATUS_OK == mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_B, trailerBlock, (MFRC522::MIFARE_Key *)key, &(mfrc522.uid)))
         {
             ret = true;
         }
     }
-
     return ret;
 }
 
-READER_status_t Reader_WriteBlock(int blockNumber, byte arrayAddress[])
+bool Reader_WriteBlock(u8 blockNumber, byte data[CARD_ROW_SIZE])
 {
-    READER_status_t ret = WRITE_OK;
+    char *logMessage;
+    bool ret = false;
+    u8 error = 3;
     MFRC522::StatusCode status;
 
-    if (0 == Reader_Is_Trailer_Block(blockNumber))
+    if (false != Reader_Is_Trailer_Block(blockNumber))
     {
-        blockNumber++;
-    }
-    status = mfrc522.MIFARE_Write(blockNumber, arrayAddress, CARD_ROW_SIZE);
-    if (status != MFRC522::STATUS_OK)
-    {
-        Serial.print("MIFARE_Write() failed: ");
-        Serial.println(mfrc522.GetStatusCodeName(status));
-        ret = WRITE_ERROR;
+        LOG("Data block a veri yazılamaz");
     }
     else
     {
-        ret = WRITE_OK;
-    }
-    return ret;
-}
-
-READER_status_t Reader_ReadBlock(int blockNumber, byte data[CARD_ROW_SIZE], u8 len)
-{
-    READER_status_t ret = READ_ERROR;
-    MFRC522::StatusCode status;
-
-    status = mfrc522.MIFARE_Read(blockNumber, data, &len);
-    if (status == MFRC522::STATUS_OK)
-    {
-        Serial.println("Read successfull");
-        ret = READ_OK;
-    }
-    return ret;
-}
-
-bool Reader_Card_Format(u8 sectorNumber, u8 blockSize)
-{
-    bool ret = false;
-    byte data[16];
-    memset(data, 0, sizeof(data));
-
-    for (size_t i = 0; i < sectorNumber * 4; i++)
-    {
-        if (WRITE_OK == Reader_WriteBlock(i, data))
+        while (error < 0)
         {
+            status = mfrc522.MIFARE_Write(blockNumber, data, CARD_ROW_SIZE);
+            logMessage = Reader_Get_Status(status, logMessage);
+            LOG(logMessage);
+            if (status != MFRC522::STATUS_OK)
+            {
+                Reader_Sleep();
+                Reader_WakeUp();
+                error--;
+            }
+            else
+            {
+                ret = true;
+                break;
+            }
+        }
+    }
+    return ret;
+}
+bool Reader_ReadBlock(u8 blockNumber, u8 data[CARD_ROW_SIZE])
+{
+    u8 error = 3;
+    char *logMessage;
+    bool ret = false;
+    MFRC522::StatusCode status;
+    byte buffer[CARD_ROW_SIZE + 2];
+    byte length = sizeof(buffer);
+
+    while (error < 0)
+    {
+        status = mfrc522.MIFARE_Read(blockNumber, buffer, &length);
+        if (status == MFRC522::STATUS_OK)
+        {
+            memcpy(data, buffer, CARD_ROW_SIZE);
             ret = true;
+            break;
         }
         else
         {
-            ret = false;
-            break;
+            Reader_Sleep();
+            Reader_WakeUp();
+            error--;
+        }
+    }
+
+    Reader_Get_Status(status, logMessage);
+    LOG(logMessage);
+    return ret;
+}
+
+bool Reader_Card_Format()
+{
+    bool ret = false;
+    byte data[16] = {0};
+    memset(data, 0, sizeof(data));
+
+    for (u8 i = 0; i < BLOCK_NUMBER; i++)
+    {
+        if (false != Reader_Is_Trailer_Block(i))
+        {
+            memcpy(data, DEFAULT_KEY_A, 6);
+            memcpy(data + ACCESS_BITS_POSITION, DEFAULT_ACCESS_BITS, 4);
+            memcpy(data + KEY_B_POSITION, DEFAULT_KEY_B, 6);
+            if (0 != Reader_WriteBlock(i, data))
+            {
+                ret = true;
+            }
+        }
+        else
+        {
+            if (0 != Reader_WriteBlock(i, data))
+            {
+                ret = true;
+            }
+        }
+    }
+}
+
+UID_t *Reader_Get_Card_Uid(UID_t *uid)
+{
+    memcpy(uid->uid, mfrc522.uid.uidByte, mfrc522.uid.size);
+    uid->length = mfrc522.uid.size;
+    return uid;
+}
+
+void example()
+{
+    bool ret = false;
+    char oldKeyData[KEY_SIZE] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+    char keyData[KEY_SIZE] = {0xDD, 0xCC, 0xFF, 0xFF, 0xFF, 0xFF};
+    u8 block;
+    u8 trailer_block;
+    u8 data[CARD_ROW_SIZE];
+    Mifare_Auth_Key newKeyA;
+    Mifare_Auth_Key oldKeyA;
+
+    AUTH_KEYS_type key_type;
+    Reader_Task_t task;
+    UID_t *uid;
+
+    task = CARD_SET_KEY;
+    key_type = AUTH_KEY_A;
+    block = 2;
+    trailer_block = Reader_Get_Trailer_Block(block);
+
+    memcpy(&oldKeyA.keyByte, oldKeyData, KEY_SIZE);
+    Reader_Prepare_Key(&newKeyA, keyData);
+
+    Reader_Init();
+
+    if (0 != Reader_HasCard())
+    {
+        if (0 != Reader_IsRead_Card())
+        {
+            if (0 != Reader_IsMifare())
+            {
+
+                switch (task)
+                {
+                case CARD_SET_KEY:
+                    Reader_Mifare_SetKeys(&oldKeyA, NULL, &newKeyA, NULL, 1);
+                    break;
+                case CARD_READ:
+                    if (0 != Reader_Card_Authenticate(key_type, trailer_block, &newKeyA))
+                    {
+                        Reader_ReadBlock(block, data);
+                    }
+                    break;
+                case CARD_WRITE:
+                    if (0 != Reader_Card_Authenticate(key_type, trailer_block, &newKeyA))
+                    {
+                        Reader_WriteBlock(block, data);
+                    }
+                    break;
+                case CARD_FORMAT:
+                    if (0 != Reader_Card_Authenticate(key_type, trailer_block, &newKeyA))
+                    {
+                        Reader_Card_Format();
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
         }
     }
 }
