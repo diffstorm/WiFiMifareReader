@@ -6,6 +6,24 @@
 
 bool FILE_Init();
 
+//! Write data to a file (an internal function for fail safe structure)
+/*!
+    \param f [output] : file pointer -> written in to this file
+    \param context [input] : the data which will be written
+    \param length [input] : how many bytes data will be written
+    \return : boolean, true if successful
+*/
+bool FILE_write_internal(File *f, void *context, u32 length);
+
+//! Read context from a file (an internal function for fail safe structure)
+/*!
+    \param f [input] : file pointer -> which data will be read from
+    \param context [output] : read in to context
+    \param length [input] : how many bytes data will be read
+    \return : boolean, true if successful
+*/
+bool FILE_read_internal(File *f, void *context, u32 length);
+
 //! Append data to a file (this will add data to end of the file)
 /*!
     \param name [output] : file name which the data will be added in
