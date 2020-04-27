@@ -33,6 +33,7 @@ void setup()
     Serial.setDebugOutput(true);
     Serial.flush();
 #endif
+    LOG_Init(115200);
     Reader_Init();
 #ifdef IR_CARD_DETECT
     IR_Init();
@@ -42,6 +43,7 @@ void setup()
     WiFi.printDiag(Serial);
     system_show_malloc();
 #endif
+    LOGp("Testing %d and %f also %s", 123, 12.3, "this");
 }
 
 void loop()
