@@ -4,6 +4,8 @@
 #include "Buzzer.h"
 #include "IR.h"
 #include "tools.h"
+#include "FileSystem.h"
+#include "whitelist.h"
 
 extern "C" {
 #include "user_interface.h"
@@ -24,6 +26,14 @@ inline void SetupBoard()
 void setup()
 {
     ESP.wdtDisable();
+    ESP.wdtEnable(WDTO_8S);
+    Serial.begin(115200);
+    srand(time(NULL));
+    delay(300);
+
+    FILE_Init();
+    delay(500);
+/*  ESP.wdtDisable();
 #ifdef WDT
     ESP.wdtEnable(WDTO_4S);
 #endif
@@ -42,14 +52,28 @@ void setup()
     WiFi.printDiag(Serial);
     system_show_malloc();
 #endif
+*/
 }
-
+static bool testdone = false;
+    
 void loop()
 {
+    
+    ESP.wdtFeed();
+    if(false == testdone)
+    {
+        Serial.println("sa");
+        example_whitelist();
+        testdone = true;
+    }
+}
+
+    /*
 #ifdef WDT
     ESP.wdtFeed();
 #endif
 
     BZR_Handler();
     delay(100);
-}
+   
+} */

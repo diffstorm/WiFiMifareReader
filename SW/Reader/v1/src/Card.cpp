@@ -261,7 +261,7 @@ bool Card_SetSector(u8 sector, u8 data[CARD_ROW_SIZE], cardRaw_t *cardRaw)
     return ret;
 }
 
-void example()
+void example_card()
 {
     u8 sector;
     u8 data[CARD_ROW_SIZE];

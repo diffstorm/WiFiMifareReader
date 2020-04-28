@@ -1,4 +1,4 @@
-#include <IRremoteESP8266.h>
+/*#include <IRremoteESP8266.h>
 #include <IRrecv.h>
 #include <IRsend.h>
 #include <IRutils.h>
@@ -32,4 +32,4 @@ bool IR_Handler()
     irrecv.resume(); // Receive the next value
 
     return ret;
-}
+}*/

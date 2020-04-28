@@ -112,7 +112,7 @@ void Scheduler_Handler()
     }
 }
 
-void example()
+void example_scheduler()
 {
     static u8 wifi_counter = 0;
     Scheduler_Init(false);
