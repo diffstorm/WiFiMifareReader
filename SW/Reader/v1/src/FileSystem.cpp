@@ -47,15 +47,11 @@ bool FILE_Init()
         SPIFFS.format();      
         ESP.restart();        
     }
-<<<<<<< Updated upstream
-    LOGi("[FILESYSTEM] init result: ", ret);
-=======
     
     if(false == ret)
     {
         LOG("[FILESYSTEM] init error");
     }
->>>>>>> Stashed changes
     return ret;    
 }
 
@@ -91,16 +87,12 @@ bool FILE_write_internal(File *f, void *context, u32 length)
     {
         debugRet = true;
     }
-<<<<<<< Updated upstream
-    LOGi("[FILESYSTEM] write_internal result: ", debugRet);
-=======
     else
     {
         LOG("[FILESYSTEM] write_internal error");
     }
     
    
->>>>>>> Stashed changes
     return (offset == length);
 }
 
@@ -136,15 +128,11 @@ bool FILE_read_internal(File *f, void *context, u32 length)
     {
         debugRet = true;
     }
-<<<<<<< Updated upstream
-    LOGi("[FILESYSTEM] read_internal result: ", debugRet);
-=======
     else
     {
         LOG("[FILESYSTEM] read_internal error");
     }
     
->>>>>>> Stashed changes
     return (offset == length);    
 }
 
@@ -172,16 +160,11 @@ bool FILE_Append(char *name, void *context, u32 length)
 
         f.close(); 
     }
-<<<<<<< Updated upstream
-
-    LOGi("[FILESYSTEM] Append result: ", ret);
-=======
     if(false == ret)
     {
         LOG("[FILESYSTEM] Append error ");
     }
 
->>>>>>> Stashed changes
     return ret;
 }
 
@@ -208,15 +191,11 @@ bool FILE_Write(char *name, void *context, u32 length)
 
         f.close(); 
     }
-<<<<<<< Updated upstream
-    LOGi("[FILESYSTEM] Write result: ", ret);
-=======
     if(false == ret)
     {
         LOG("[FILESYSTEM] write error ");
     }
     
->>>>>>> Stashed changes
     return ret;
 }
 
@@ -238,15 +217,8 @@ bool FILE_Read(char *name, void *context, u32 length, u32 pos)
 
     if(NULL != f)
     {
-<<<<<<< Updated upstream
-        
         if(false != f.seek(pos, SeekMode::SeekSet))
         {
-            
-=======
-        if(false != f.seek(pos, SeekMode::SeekSet))
-        {
->>>>>>> Stashed changes
             if(false != FILE_read_internal(&f, context, length))
             {
                 ret=true;
@@ -256,15 +228,11 @@ bool FILE_Read(char *name, void *context, u32 length, u32 pos)
         f.close();    
     }
 
-<<<<<<< Updated upstream
-    LOGi("[FILESYSTEM] Read result: ", ret);
-=======
     if(false == ret)
     {
         LOG("[FILESYSTEM] Read error ");
     }
 
->>>>>>> Stashed changes
     return ret;
 
 }
@@ -296,14 +264,10 @@ bool FILE_update(char *name, void *context, u32 length, u32 pos)
 
     f.close();  
     }
-<<<<<<< Updated upstream
-    LOGi("[FILESYSTEM] Update result: ", ret);
-=======
     if(false == ret)
     {
         LOG("[FILESYSTEM] Update error ");
     }
->>>>>>> Stashed changes
     return ret;
 }
 
@@ -375,9 +339,5 @@ size_t FILE_get_size(char *name)
     File f = SPIFFS.open(name, "r");
     size_t ret = f.size();
     f.close();
-<<<<<<< Updated upstream
-    LOGd("[FILESYSTEM] file size result: ", ret);
-=======
->>>>>>> Stashed changes
     return ret;
 }
