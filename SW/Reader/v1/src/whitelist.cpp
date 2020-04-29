@@ -1,27 +1,26 @@
-#include<whitelist.h>
-#include<FileSystem.h>
+#include <whitelist.h>
+#include <FileSystem.h>
 #include <tools.h>
-#include"DebugLog.h"
-
+#include "DebugLog.h"
 
 // TODO : debuglog implementasyonu
-#define CRCUID              0xDEAD
-#define MAX_ITEM_SIZE       250
-#define MAX_ITEMS_IN_FILE   50
+#define CRCUID 0xDEAD
+#define MAX_ITEM_SIZE 250
+#define MAX_ITEMS_IN_FILE 50
 #define MAX_FILENAME_LENGTH 15
 
-#define MAX_UID_SIZE        (MAX_ITEMS_IN_FILE * sizeof(UID_t))
-#define MAX_DETAILS_SIZE    (MAX_ITEMS_IN_FILE * sizeof(WL_Detail_t))
-#define MAX_FILE_NUMBER     (MAX_ITEM_SIZE / MAX_ITEMS_IN_FILE)
+#define MAX_UID_SIZE (MAX_ITEMS_IN_FILE * sizeof(UID_t))
+#define MAX_DETAILS_SIZE (MAX_ITEMS_IN_FILE * sizeof(WL_Detail_t))
+#define MAX_FILE_NUMBER (MAX_ITEM_SIZE / MAX_ITEMS_IN_FILE)
 
-#define ERR_NO_SPACE        0xFF
-#define WL_FileExtension    ".wl"
-#define Filename_crcuid     "crcuid"
-#define Filename_uid        "uid"
-#define Filename_detail     "detail"
+#define ERR_NO_SPACE 0xFF
+#define WL_FileExtension ".wl"
+#define Filename_crcuid "crcuid"
+#define Filename_uid "uid"
+#define Filename_detail "detail"
 
-
-typedef enum {
+typedef enum
+{
     fn_CRCUID_List = 0,
     fn_UID_List,
     fn_Detail_List,
@@ -37,23 +36,23 @@ void WL_GetFileName(WL_Filenames_t fn, u8 index, char filename[MAX_FILENAME_LENG
 {
     char *p = filename;
     p = pstrcpy(p, FS_ROOTDIR);
-    switch(fn) 
+    switch(fn)
     {
         case fn_CRCUID_List:
-        p = pstrcpy(p, Filename_crcuid);
-        break;
+            p = pstrcpy(p, Filename_crcuid);
+            break;
         case fn_UID_List:
-        p = pstrcpy(p, Filename_uid);
-        *p++ = '0' + index;
-        *p++ = NULL;
-        break;
+            p = pstrcpy(p, Filename_uid);
+            *p++ = '0' + index;
+            *p++ = NULL;
+            break;
         case fn_Detail_List:
-        p = pstrcpy(p,Filename_detail);
-        *p++ = '0' + index;
-        *p++ = NULL;
-        break;
+            p = pstrcpy(p, Filename_detail);
+            *p++ = '0' + index;
+            *p++ = NULL;
+            break;
     }
-    p = pstrcpy(p,WL_FileExtension);
+    p = pstrcpy(p, WL_FileExtension);
     //LOG("[WL] getfilename: ");
     LOG(filename);
 }
@@ -88,12 +87,12 @@ u8 WL_getFileIndex(u32 pos)
 {
     u8 index;
 
-    index = (pos) / MAX_ITEMS_IN_FILE;   
+    index = (pos) / MAX_ITEMS_IN_FILE;
 
     if(MAX_FILE_NUMBER <= index)
     {
         LOG("Error, position is wrong");
-        index = ERR_NO_SPACE;     
+        index = ERR_NO_SPACE;
     }
 
     return index;
@@ -110,7 +109,7 @@ u8 WL_getFileIndex(u32 pos)
     \param pos [input] : write process nbeginning position
     \return : boolean, true if successful
 */
-bool WL_copyItem(WL_Filenames_t type, u8 src_index, u8 dst_index, void *context, u32 length, u32 pos)  
+bool WL_copyItem(WL_Filenames_t type, u8 src_index, u8 dst_index, void *context, u32 length, u32 pos)
 {
     bool ret = false;
     char fn[MAX_FILENAME_LENGTH];
@@ -129,15 +128,14 @@ bool WL_copyItem(WL_Filenames_t type, u8 src_index, u8 dst_index, void *context,
     return ret;
 }
 
-
 //! Cuts the last item in file
 /*!
     \param type [input] : file type
     \param index [input] : index for decide file
-    \param length [input] : decides new file size 
+    \param length [input] : decides new file size
     \return : boolean, true if successful
 */
-bool WL_cutLastItem(WL_Filenames_t type, u8 index, u32 length)  
+bool WL_cutLastItem(WL_Filenames_t type, u8 index, u32 length)
 {
     bool ret = false;
     char fn[MAX_FILENAME_LENGTH];
@@ -153,7 +151,7 @@ bool WL_cutLastItem(WL_Filenames_t type, u8 index, u32 length)
 
     if(0 < size)
     {
-        p = (u8 *) malloc(size);
+        p = (u8 *)malloc(size);
         if(NULL != p)
         {
             if(false != FILE_Read(fn, p, size, 0))
@@ -179,7 +177,7 @@ bool WL_cutLastItem(WL_Filenames_t type, u8 index, u32 length)
             LOG("File removed");
         }
     }
-    
+
     return ret;
 }
 
@@ -211,11 +209,11 @@ long WL_search(UID_t uid)
     UID_t ruid;
     char fn[MAX_FILENAME_LENGTH];
     u16 crcuid_list[MAX_ITEM_SIZE];
-    
+
     crc = CRC16(CRCUID, (u8 *)&uid, (unsigned int)sizeof(UID_t));
 
     WL_GetFileName(fn_CRCUID_List, 0, fn);
-    memset((u8*)&crcuid_list, 0, sizeof(crcuid_list));
+    memset((u8 *)&crcuid_list, 0, sizeof(crcuid_list));
     readsize = WL_GetSafeSize(fn, sizeof(crcuid_list), &size);
     if(false != FILE_Read(fn, &crcuid_list[0], readsize, 0))
     {
@@ -227,12 +225,12 @@ long WL_search(UID_t uid)
                 pos = (i % MAX_ITEMS_IN_FILE) * sizeof(UID_t);
                 if(false != FILE_Read(fn, &ruid, sizeof(UID_t), pos))
                 {
-                    if(0 == memcmp(&uid, &ruid,  sizeof(UID_t)))
+                    if(0 == memcmp(&uid, &ruid, sizeof(UID_t)))
                     {
                         ret = i;
                         //LOG("[WL] add - find in: ");
                         //LOG(fn);
-                        LOGd("[WL] add - position: ",pos);
+                        LOGd("[WL] add - position: ", pos);
                         //Serial.printf("[WL]-> search-> find in: %s\n", fn);
                         //Serial.printf("[WL]-> search-> position: %d\n", pos);
                         break;
@@ -240,7 +238,6 @@ long WL_search(UID_t uid)
                 }
             }
         }
-        
     }
 
     return ret;
@@ -255,12 +252,12 @@ bool WL_delete(UID_t uid)
 {
 
     bool ret = false;
-    u8 control=0;
+    u8 control = 0;
     u16 crc;
     UID_t ruid;
     WL_detail_t rdetail;
-    u8 fileindex;          // 0 ile 5 arasında değer döner
-    long itempos;            //dosyanın başından itibaren byte bazında pozisyon döner
+    u8 fileindex; // 0 ile 5 arasında değer döner
+    long itempos; //dosyanın başından itibaren byte bazında pozisyon döner
     u8 lastfileindex;
 
     long pos = WL_search(uid); // 0 ile 250 arasında değer döner
@@ -269,19 +266,19 @@ bool WL_delete(UID_t uid)
     {
         lastfileindex = WL_getLastFileIndex();
         fileindex = WL_getFileIndex(pos);
-               
+
         if(false != WL_copyItem(fn_CRCUID_List, lastfileindex, fileindex, &crc, sizeof(u16), pos))
         {
             if(false != WL_cutLastItem(fn_CRCUID_List, 0, sizeof(u16)))
             {
                 control++;
                 LOG("crc file updated");
-                
-                //Serial.println("crc file updated");      
+
+                //Serial.println("crc file updated");
             }
         }
         ///////////////////////////////////////
-        
+
         itempos = (pos % MAX_ITEMS_IN_FILE) * sizeof(UID_t);
         if(false != WL_copyItem(fn_UID_List, lastfileindex, fileindex, &ruid, sizeof(UID_t), itempos))
         {
@@ -289,36 +286,32 @@ bool WL_delete(UID_t uid)
             {
                 control++;
                 LOG("uid file updated");
-                //Serial.println("uid file updated");      
+                //Serial.println("uid file updated");
             }
         }
         ///////////////////////////////////////////////////
-                    
-        itempos = (pos  % MAX_ITEMS_IN_FILE)* sizeof(WL_detail_t);
+
+        itempos = (pos % MAX_ITEMS_IN_FILE) * sizeof(WL_detail_t);
         if(false != WL_copyItem(fn_Detail_List, lastfileindex, fileindex, &rdetail, sizeof(WL_detail_t), itempos))
         {
             if(false != WL_cutLastItem(fn_Detail_List, lastfileindex, sizeof(WL_detail_t)))
             {
                 control++;
                 LOG("detail file updated");
-                //Serial.println("detail file updated");      
+                //Serial.println("detail file updated");
             }
         }
-        
     }
 
-        if(3 == control)
-        {
-            ret = true;
-        }
-        LOGi("[WL]-> delete-> status: ",ret);
-        
-        //Serial.printf("[WL]-> delete-> status: %d\n",ret);
+    if(3 == control)
+    {
+        ret = true;
+    }
+    LOGi("[WL]-> delete-> status: ", ret);
 
-        return ret;
+    //Serial.printf("[WL]-> delete-> status: %d\n",ret);
 
-
-
+    return ret;
 }
 
 //! Adds given uid to whitelist
@@ -334,30 +327,30 @@ bool WL_add(WL_item_t item)
     u16 crc;
     u8 lastfileindex;
 
-    WL_delete(item.uid);  //
+    WL_delete(item.uid); //
 
     lastfileindex = WL_getLastFileIndex();
     if(MAX_FILE_NUMBER > lastfileindex)
     {
         crc = CRC16(CRCUID, (u8 *)&item.uid, sizeof(UID_t));
-        LOGi("[WL]-> add-> added crc: ",crc);  // TODO pos ve crc değerleri çok büyük oldugu için u32 bastırabilecek bir debug log fonksiyonu
+        LOGi("[WL]-> add-> added crc: ", crc); // TODO pos ve crc değerleri çok büyük oldugu için u32 bastırabilecek bir debug log fonksiyonu
         //Serial.println(crc);
 
-        WL_GetFileName(fn_CRCUID_List,0,fn);
+        WL_GetFileName(fn_CRCUID_List, 0, fn);
         if(false != FILE_Append(fn, &crc, sizeof(u16)))
-        {  
-            Serial.printf("sizeof crc file: %d\n",FILE_get_size(fn));
-            WL_GetFileName(fn_UID_List, lastfileindex,fn);
+        {
+            Serial.printf("sizeof crc file: %d\n", FILE_get_size(fn));
+            WL_GetFileName(fn_UID_List, lastfileindex, fn);
             if(false != FILE_Append(fn, &item.uid, sizeof(UID_t)))
-            {   
-                Serial.printf("sizeof uid file: %d\n",FILE_get_size(fn));
-                WL_GetFileName(fn_Detail_List, lastfileindex,fn);
-                if(false != FILE_Append(fn,&item.detail , sizeof(WL_detail_t)))    
-                { 
-                    Serial.printf("sizeof detail file: %d\n",FILE_get_size(fn));
-                    ret= true;
+            {
+                Serial.printf("sizeof uid file: %d\n", FILE_get_size(fn));
+                WL_GetFileName(fn_Detail_List, lastfileindex, fn);
+                if(false != FILE_Append(fn, &item.detail, sizeof(WL_detail_t)))
+                {
+                    Serial.printf("sizeof detail file: %d\n", FILE_get_size(fn));
+                    ret = true;
                     LOG("add successful");
-                    
+
                     //Serial.println("Add successful");
                     //Serial.println("Add successful");
                 }
@@ -368,7 +361,7 @@ bool WL_add(WL_item_t item)
     return ret;
 }
 
-//! Reads data (at given index) inside to item 
+//! Reads data (at given index) inside to item
 /*!
     \param index [input] : the index which will be read
     \param item [output] : the data will be read in to
@@ -376,47 +369,42 @@ bool WL_add(WL_item_t item)
 */
 bool WL_read(u16 index, WL_item_t *item)
 {
-   bool ret= false;
-   UID_t ruid;
-   WL_detail_t rdetail;
-   u32 itempos;
-   u8 fileindex = WL_getFileIndex(index);
-   char fn[MAX_FILENAME_LENGTH];
+    bool ret = false;
+    UID_t ruid;
+    WL_detail_t rdetail;
+    u32 itempos;
+    u8 fileindex = WL_getFileIndex(index);
+    char fn[MAX_FILENAME_LENGTH];
 
-   itempos = (index % MAX_ITEMS_IN_FILE) * sizeof(UID_t);
-   WL_GetFileName(fn_UID_List,fileindex,fn);
+    itempos = (index % MAX_ITEMS_IN_FILE) * sizeof(UID_t);
+    WL_GetFileName(fn_UID_List, fileindex, fn);
 
-   if(false != FILE_Read(fn,&ruid,sizeof(UID_t),itempos))
-   {
+    if(false != FILE_Read(fn, &ruid, sizeof(UID_t), itempos))
+    {
         memcpy(&item->uid, &ruid, sizeof(UID_t));
-        
-        itempos = (index  % MAX_ITEMS_IN_FILE)* sizeof(WL_detail_t);
+
+        itempos = (index % MAX_ITEMS_IN_FILE) * sizeof(WL_detail_t);
 
         WL_GetFileName(fn_Detail_List, fileindex, fn);
 
-        if(false != FILE_Read(fn, &rdetail,sizeof(WL_detail_t),itempos))
+        if(false != FILE_Read(fn, &rdetail, sizeof(WL_detail_t), itempos))
         {
-            memcpy(&item->detail, &rdetail, sizeof(WL_detail_t));     
-            ret = true;        
-        }  
-        
-   }
-   
-   return ret;  
+            memcpy(&item->detail, &rdetail, sizeof(WL_detail_t));
+            ret = true;
+        }
+    }
+
+    return ret;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////
-
-
-
 
 u8 WL_GetAvailableFileIndex()
 {
     u8 index;
     char fn[MAX_FILENAME_LENGTH];
 
-    for(index=0; index < MAX_FILE_NUMBER; index++)
+    for(index = 0; index < MAX_FILE_NUMBER; index++)
     {
         WL_GetFileName(fn_UID_List, index, fn);
         if(FILE_get_size(fn) < MAX_UID_SIZE)
@@ -424,24 +412,21 @@ u8 WL_GetAvailableFileIndex()
             break;
         }
     }
-    
+
     if(MAX_FILE_NUMBER == index)
     {
         Serial.println("Error, system is full");
-        index = ERR_NO_SPACE; 
+        index = ERR_NO_SPACE;
     }
-    
+
     return index;
 }
-
-
-
 
 void example_whitelist()
 {
     u8 i;
 
-    typedef struct 
+    typedef struct
     {
         WL_item_t white[36];
         WL_item_t black;
@@ -456,9 +441,9 @@ void example_whitelist()
         WL_item_t white9;
         WL_item_t white55;
         WL_item_t item;
-    }t_t;
+    } t_t;
 
-    t_t *t = (t_t *) malloc(sizeof(t_t));
+    t_t *t = (t_t *)malloc(sizeof(t_t));
 
     t->black.uid.length = 10;
     t->white1.uid.length = 10;
@@ -520,9 +505,6 @@ void example_whitelist()
         t->white55.uid.uid[i] = 5;
     }
 
-   
-    
-
     WL_add(t->white1);
     LOG("burasi pos cikmali");
     WL_search(t->white1.uid);
@@ -531,7 +513,7 @@ void example_whitelist()
     WL_search(t->white1.uid);
     WL_add(t->white1);
 
-    for( i = 0; i < 36; i++)
+    for(i = 0; i < 36; i++)
     {
         for(u8 j = 0; j < 10; j++)
         {
@@ -545,7 +527,7 @@ void example_whitelist()
     WL_add(t->white2);
     WL_search(t->white2.uid);
 
-    for( i = 0; i < 36; i++)
+    for(i = 0; i < 36; i++)
     {
 
         for(u8 j = 0; j < 10; j++)
@@ -556,7 +538,6 @@ void example_whitelist()
         WL_add(t->white[i]);
     }
 
-  
     WL_add(t->white5);
     WL_delete(t->white5.uid);
     Serial.println("-1 cıkmali:");
@@ -574,7 +555,6 @@ void example_whitelist()
         }
         WL_add(t->white[i]);
     }
-
 
     WL_add(t->white5);
     WL_add(t->white6);
@@ -602,15 +582,12 @@ void example_whitelist()
 
     WL_item_t *itemptr;
     WL_item_t item;
-    itemptr=&item;
+    itemptr = &item;
 
-    WL_read(0,itemptr);
+    WL_read(0, itemptr);
     Serial.printf("%s\n", itemptr->detail.name);
-    
-    
 
     /*
-*/
+    */
     free(t);
 }
-

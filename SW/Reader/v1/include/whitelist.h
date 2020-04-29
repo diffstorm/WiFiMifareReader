@@ -8,7 +8,8 @@ typedef struct __attribute__((packed))
 {
     char name[CARD_CFG_NAME_LENGTH];
     char surname[CARD_CFG_NAME_LENGTH];
-} WL_detail_t;
+}
+WL_detail_t;
 
 typedef struct __attribute__((packed))
 {
@@ -40,7 +41,7 @@ bool WL_delete(UID_t uid);
 */
 long WL_search(UID_t uid);
 
-//! Reads data (at given index) inside to item 
+//! Reads data (at given index) inside to item
 /*!
     \param index [input] : the index which will be read
     \param item [output] : the data will be read in to

@@ -33,32 +33,32 @@ void setup()
 
     FILE_Init();
     delay(500);
-/*  ESP.wdtDisable();
-#ifdef WDT
-    ESP.wdtEnable(WDTO_4S);
-#endif
-    SetupBoard();
-#ifdef SERIAL_PORT
-    Serial.begin(115200);
-    Serial.setDebugOutput(true);
-    Serial.flush();
-#endif
-    Reader_Init();
-#ifdef IR_CARD_DETECT
-    IR_Init();
-#endif
-    BZR_Init();
-#ifdef SERIAL_PORT
-    WiFi.printDiag(Serial);
-    system_show_malloc();
-#endif
-*/
+    /*  ESP.wdtDisable();
+    #ifdef WDT
+        ESP.wdtEnable(WDTO_4S);
+    #endif
+        SetupBoard();
+    #ifdef SERIAL_PORT
+        Serial.begin(115200);
+        Serial.setDebugOutput(true);
+        Serial.flush();
+    #endif
+        Reader_Init();
+    #ifdef IR_CARD_DETECT
+        IR_Init();
+    #endif
+        BZR_Init();
+    #ifdef SERIAL_PORT
+        WiFi.printDiag(Serial);
+        system_show_malloc();
+    #endif
+    */
 }
 static bool testdone = false;
-    
+
 void loop()
 {
-    
+
     ESP.wdtFeed();
     if(false == testdone)
     {
@@ -68,12 +68,12 @@ void loop()
     }
 }
 
-    /*
+/*
 #ifdef WDT
-    ESP.wdtFeed();
+ESP.wdtFeed();
 #endif
 
-    BZR_Handler();
-    delay(100);
-   
+BZR_Handler();
+delay(100);
+
 } */

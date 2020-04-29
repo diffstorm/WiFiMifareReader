@@ -3,12 +3,12 @@
 
 bool FILE_Init()
 {
-    bool ret=false;
+    bool ret = false;
     u8 i;
     u8 error = 100;
-    u8 errorTop=error+30;
+    u8 errorTop = error + 30;
 
-    SPIFFS.format();   // silinecek. Deneme amaçlı dosya boyutları artmasın diye yapıldı.
+    SPIFFS.format(); // silinecek. Deneme amaçlı dosya boyutları artmasın diye yapıldı.
 
     for(i = 0; i <= error; i++)
     {
@@ -18,41 +18,41 @@ bool FILE_Init()
         }
         else
         {
-            ret=true;
+            ret = true;
             break;
         }
     }
 
-    if(false==ret)
+    if(false == ret)
     {
         while(i >= error && i <= errorTop)
         {
             if(false == SPIFFS.begin())
             {
                 SPIFFS.check();
-                SPIFFS.gc(); 
+                SPIFFS.gc();
             }
             else
             {
-                ret=true;
+                ret = true;
                 break;
             }
 
-        i++; 
+            i++;
         }
     }
 
     if(i > errorTop)
     {
-        SPIFFS.format();      
-        ESP.restart();        
+        SPIFFS.format();
+        ESP.restart();
     }
-    
+
     if(false == ret)
     {
         LOG("[FILESYSTEM] init error");
     }
-    return ret;    
+    return ret;
 }
 
 //! Write data to a file (an internal function for fail safe structure)
@@ -72,7 +72,7 @@ bool FILE_write_internal(File *f, void *context, u32 length)
     while(offset < length && error > 0)
     {
         written = f->write((u8 *)context + offset, length - offset);
-        
+
         if(written > 0)
         {
             offset += written;
@@ -82,7 +82,7 @@ bool FILE_write_internal(File *f, void *context, u32 length)
             error--;
         }
     }
- 
+
     if(offset == length)
     {
         debugRet = true;
@@ -91,15 +91,14 @@ bool FILE_write_internal(File *f, void *context, u32 length)
     {
         LOG("[FILESYSTEM] write_internal error");
     }
-    
-   
+
     return (offset == length);
 }
 
 //! Read context from a file (an internal function for fail safe structure)
 /*!
     \param f [input] : file pointer -> which data will be read from
-    \param context [output] : read data in to context 
+    \param context [output] : read data in to context
     \param length [input] : how many bytes data will be read
     \return : boolean, true if successfula
 */
@@ -112,7 +111,7 @@ bool FILE_read_internal(File *f, void *context, u32 length)
 
     while(offset < length && error > 0)
     {
-        read = f->read((u8 *)context + offset , length - offset);  
+        read = f->read((u8 *)context + offset, length - offset);
 
         if(read > 0)
         {
@@ -132,10 +131,9 @@ bool FILE_read_internal(File *f, void *context, u32 length)
     {
         LOG("[FILESYSTEM] read_internal error");
     }
-    
-    return (offset == length);    
-}
 
+    return (offset == length);
+}
 
 //! Append data to a file (this will add data to end of the file)
 /*!
@@ -153,12 +151,12 @@ bool FILE_Append(char *name, void *context, u32 length)
 
     if(NULL != f)
     {
-        if(false != FILE_write_internal(&f, context, length))    
+        if(false != FILE_write_internal(&f, context, length))
         {
             ret = true;
         }
 
-        f.close(); 
+        f.close();
     }
     if(false == ret)
     {
@@ -186,26 +184,25 @@ bool FILE_Write(char *name, void *context, u32 length)
     {
         if(false != FILE_write_internal(&f, context, length))
         {
-            ret = true; 
+            ret = true;
         }
 
-        f.close(); 
+        f.close();
     }
     if(false == ret)
     {
         LOG("[FILESYSTEM] write error ");
     }
-    
+
     return ret;
 }
 
-
-//! Read data from the file from given position 
+//! Read data from the file from given position
 /*!
     \param name [input] : file name which the data will be read from
     \param context [output] : Read in to context
     \param length [input] : how many bytes data will be read
-    \param pos [input] : beginning position of the read process in file  
+    \param pos [input] : beginning position of the read process in file
     \return : boolean, true if successful
 */
 bool FILE_Read(char *name, void *context, u32 length, u32 pos)
@@ -221,11 +218,11 @@ bool FILE_Read(char *name, void *context, u32 length, u32 pos)
         {
             if(false != FILE_read_internal(&f, context, length))
             {
-                ret=true;
+                ret = true;
             }
-        } 
+        }
 
-        f.close();    
+        f.close();
     }
 
     if(false == ret)
@@ -234,7 +231,6 @@ bool FILE_Read(char *name, void *context, u32 length, u32 pos)
     }
 
     return ret;
-
 }
 
 //! Updates a file from given position
@@ -242,7 +238,7 @@ bool FILE_Read(char *name, void *context, u32 length, u32 pos)
     \param name [output] : file name which the data will be written
     \param context [input] : the data which will be written
     \param length [input] : how many bytes data will be written
-    \param pos [input] : beginning position of the write process in file  
+    \param pos [input] : beginning position of the write process in file
     \return : boolean, true if successful
 */
 bool FILE_update(char *name, void *context, u32 length, u32 pos)
@@ -250,19 +246,19 @@ bool FILE_update(char *name, void *context, u32 length, u32 pos)
     bool ret = false;
 
     File f = SPIFFS.open(name, "r+");
-    
+
     if(NULL != f)
     {
 
         if(false != f.seek(pos, SeekMode::SeekSet))
         {
-            if(false != FILE_write_internal(&f, context,length))
+            if(false != FILE_write_internal(&f, context, length))
             {
-                ret=true;
+                ret = true;
             }
         }
 
-    f.close();  
+        f.close();
     }
     if(false == ret)
     {
@@ -271,15 +267,14 @@ bool FILE_update(char *name, void *context, u32 length, u32 pos)
     return ret;
 }
 
-
-//! Gives all filenames in "/" directory 
+//! Gives all filenames in "/" directory
 /*!
     \return : string, filenames seperated with comma in a string
 */
 String FILE_get_file_list()
 {
     String path = "/";
-    Dir dir =  SPIFFS.openDir(path);
+    Dir dir = SPIFFS.openDir(path);
     String output = "[";
     while(dir.next())
     {
@@ -288,7 +283,7 @@ String FILE_get_file_list()
         {
             output += ",";
         }
-        output += String(entry.fullName());    //name()).substring(1); //name ile fullname aynı sonucu veriyor
+        output += String(entry.fullName()); //name()).substring(1); //name ile fullname aynı sonucu veriyor
         entry.close();
     }
 
@@ -296,14 +291,14 @@ String FILE_get_file_list()
     return output;
 }
 
-size_t FILE_get_dir_size(char* dirPath)
+size_t FILE_get_dir_size(char *dirPath)
 {
-    size_t size=0;
+    size_t size = 0;
 
     Dir dir = SPIFFS.openDir(dirPath);
-    while (dir.next())
+    while(dir.next())
     {
-      size += dir.fileSize();  
+        size += dir.fileSize();
     }
 
     LOGd("[FILESYSTEM] directory size result: ", size);
