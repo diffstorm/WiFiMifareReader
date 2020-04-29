@@ -24518,6 +24518,18 @@ Comments, suggestions and bug reports please send to: &lt;b&gt;&lt;a href="mailt
 <pinref part="GND6" gate="1" pin="GND"/>
 <wire x1="167.64" y1="229.616" x2="167.64" y2="233.68" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="GND13" gate="1" pin="GND"/>
+<pinref part="X2" gate=".2" pin="SK"/>
+<wire x1="180.594" y1="229.616" x2="180.594" y2="248.92" width="0.1524" layer="91"/>
+<wire x1="180.594" y1="248.92" x2="195.58" y2="248.92" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="R3" gate="G$1" pin="1"/>
+<pinref part="GND10" gate="1" pin="GND"/>
+<wire x1="153.924" y1="119.888" x2="153.924" y2="115.062" width="0.1524" layer="91"/>
+<wire x1="153.924" y1="115.062" x2="156.718" y2="115.062" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="VCC" class="0">
 <segment>
@@ -24819,6 +24831,17 @@ Comments, suggestions and bug reports please send to: &lt;b&gt;&lt;a href="mailt
 <wire x1="154.94" y1="157.48" x2="154.94" y2="154.94" width="0.1524" layer="91"/>
 <junction x="154.94" y="154.94"/>
 </segment>
+<segment>
+<pinref part="STATE_LED" gate="G$1" pin="C"/>
+<wire x1="157.48" y1="165.1" x2="157.48" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="157.48" y1="157.48" x2="154.94" y2="157.48" width="0.1524" layer="91"/>
+<pinref part="SJR2" gate="G$1" pin="TXD"/>
+<wire x1="149.86" y1="154.94" x2="154.94" y2="154.94" width="0.1524" layer="91"/>
+<label x="157.48" y="154.94" size="1.016" layer="95" xref="yes"/>
+<wire x1="154.94" y1="154.94" x2="157.48" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="154.94" y1="157.48" x2="154.94" y2="154.94" width="0.1524" layer="91"/>
+<junction x="154.94" y="154.94"/>
+</segment>
 </net>
 <net name="RXD" class="0">
 <segment>
@@ -24945,6 +24968,28 @@ Comments, suggestions and bug reports please send to: &lt;b&gt;&lt;a href="mailt
 <wire x1="149.86" y1="142.24" x2="170.18" y2="142.24" width="0.1524" layer="91"/>
 <pinref part="R4" gate="G$1" pin="1"/>
 <wire x1="170.18" y1="170.18" x2="170.18" y2="142.24" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="BUTTON_CONTROL" class="0">
+<segment>
+<pinref part="R12" gate="G$1" pin="2"/>
+<pinref part="R11" gate="G$1" pin="2"/>
+<wire x1="172.72" y1="63.5" x2="172.72" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="172.72" y1="71.12" x2="157.48" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="172.72" y1="71.12" x2="182.88" y2="71.12" width="0.1524" layer="91"/>
+<junction x="172.72" y="71.12"/>
+<label x="182.88" y="71.12" size="1.778" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="SJR2" gate="G$1" pin="GPIO2"/>
+<wire x1="149.86" y1="142.24" x2="170.18" y2="142.24" width="0.1016" layer="91"/>
+<label x="177.8" y="142.24" size="1.778" layer="95" xref="yes"/>
+<pinref part="R2" gate="G$1" pin="1"/>
+<wire x1="170.18" y1="142.24" x2="177.8" y2="142.24" width="0.1016" layer="91"/>
+<wire x1="170.434" y1="170.18" x2="170.18" y2="170.18" width="0.1524" layer="91"/>
+<wire x1="170.18" y1="170.18" x2="170.18" y2="142.24" width="0.1524" layer="91"/>
+<junction x="170.18" y="170.18"/>
+<junction x="170.18" y="142.24"/>
 </segment>
 </net>
 </nets>

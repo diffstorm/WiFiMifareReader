@@ -4,6 +4,8 @@
 #include "Buzzer.h"
 #include "IR.h"
 #include "tools.h"
+#include "FileSystem.h"
+#include "whitelist.h"
 
 extern "C" {
 #include "user_interface.h"
@@ -23,11 +25,10 @@ inline void SetupBoard()
 
 void setup()
 {
-    ESP.wdtDisable();
 #ifdef WDT
-    ESP.wdtEnable(WDTO_4S);
+    ESP.wdtDisable();
+    ESP.wdtEnable(WDTO_8S);
 #endif
-    SetupBoard();
 #ifdef SERIAL_PORT
     Serial.begin(115200);
     Serial.setDebugOutput(true);
@@ -51,7 +52,4 @@ void loop()
 #ifdef WDT
     ESP.wdtFeed();
 #endif
-
-    BZR_Handler();
-    delay(100);
 }

@@ -91,4 +91,17 @@ u16 CRC16(u16 crc, unsigned char *i, unsigned int l)
     return crc;
 }
 
+char *pstrcpy(char *s1, const char *s2)
+{
+    char *dst = s1;
+    const char *src = s2;
+    u16 len = 0;
+
+    while((*dst++ = *src++) != '\0')
+    {
+        len++;
+    }
+
+    return s1 + len;
+}
 //-----------------------------------------------------------------
