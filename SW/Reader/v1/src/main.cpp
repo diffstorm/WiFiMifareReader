@@ -25,8 +25,11 @@ inline void SetupBoard()
 
 void setup()
 {
+#ifdef WDT
     ESP.wdtDisable();
     ESP.wdtEnable(WDTO_8S);
+#endif
+#ifdef SERIAL_PORT
     Serial.begin(115200);
     Serial.setDebugOutput(true);
     Serial.flush();
@@ -43,26 +46,10 @@ void setup()
 #endif
     LOGp("Testing %d and %f also %s", 123, 12.3, "this");
 }
-static bool testdone = false;
 
 void loop()
 {
-
-    ESP.wdtFeed();
-    if(false == testdone)
-    {
-        Serial.println("sa");
-        example_whitelist();
-        testdone = true;
-    }
-}
-
-/*
 #ifdef WDT
-ESP.wdtFeed();
+    ESP.wdtFeed();
 #endif
-
-BZR_Handler();
-delay(100);
-
-} */
+}

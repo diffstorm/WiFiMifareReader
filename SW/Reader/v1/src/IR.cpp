@@ -1,4 +1,4 @@
-/*#include <IRremoteESP8266.h>
+#include <IRremoteESP8266.h>
 #include <IRrecv.h>
 #include <IRsend.h>
 #include <IRutils.h>
