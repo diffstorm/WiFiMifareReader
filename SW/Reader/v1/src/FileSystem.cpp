@@ -1,5 +1,6 @@
-#include "filesystem.h"
-#include "DebugLog.h"
+
+#include "FileSystem.h"
+#include "tools.h"
 
 bool FILE_Init()
 {
@@ -8,7 +9,7 @@ bool FILE_Init()
     u8 error = 100;
     u8 errorTop = error + 30;
 
-    SPIFFS.format(); // silinecek. Deneme amaçlı dosya boyutları artmasın diye yapıldı.
+    //SPIFFS.format(); // silinecek. Deneme amaçlı dosya boyutları artmasın diye yapıldı.
 
     for(i = 0; i <= error; i++)
     {
@@ -42,7 +43,7 @@ bool FILE_Init()
         }
     }
 
-    if(i > errorTop)
+    if(false == ret && i > errorTop)
     {
         SPIFFS.format();
         ESP.restart();
@@ -52,6 +53,7 @@ bool FILE_Init()
     {
         LOG("[FILESYSTEM] init error");
     }
+
     return ret;
 }
 
@@ -67,7 +69,6 @@ bool FILE_write_internal(File *f, void *context, u32 length)
     u32 offset = 0;
     u32 written = 0;
     u8 error = 3;
-    bool debugRet = false;
 
     while(offset < length && error > 0)
     {
@@ -83,11 +84,7 @@ bool FILE_write_internal(File *f, void *context, u32 length)
         }
     }
 
-    if(offset == length)
-    {
-        debugRet = true;
-    }
-    else
+    if(offset != length)
     {
         LOG("[FILESYSTEM] write_internal error");
     }
@@ -107,7 +104,6 @@ bool FILE_read_internal(File *f, void *context, u32 length)
     u32 offset = 0;
     u32 read = 0;
     u8 error = 3;
-    bool debugRet = false;
 
     while(offset < length && error > 0)
     {
@@ -123,11 +119,7 @@ bool FILE_read_internal(File *f, void *context, u32 length)
         }
     }
 
-    if(offset == length)
-    {
-        debugRet = true;
-    }
-    else
+    if(offset != length)
     {
         LOG("[FILESYSTEM] read_internal error");
     }
@@ -144,18 +136,15 @@ bool FILE_read_internal(File *f, void *context, u32 length)
 */
 bool FILE_Append(char *name, void *context, u32 length)
 {
-
     bool ret = false;
 
     File f = SPIFFS.open(name, "a");
-
     if(NULL != f)
     {
         if(false != FILE_write_internal(&f, context, length))
         {
             ret = true;
         }
-
         f.close();
     }
     if(false == ret)
@@ -175,18 +164,15 @@ bool FILE_Append(char *name, void *context, u32 length)
 */
 bool FILE_Write(char *name, void *context, u32 length)
 {
-
     bool ret = false;
 
     File f = SPIFFS.open(name, "w");
-
     if(NULL != f)
     {
         if(false != FILE_write_internal(&f, context, length))
         {
             ret = true;
         }
-
         f.close();
     }
     if(false == ret)
@@ -207,11 +193,9 @@ bool FILE_Write(char *name, void *context, u32 length)
 */
 bool FILE_Read(char *name, void *context, u32 length, u32 pos)
 {
-
     bool ret = false;
 
     File f = SPIFFS.open(name, "r");
-
     if(NULL != f)
     {
         if(false != f.seek(pos, SeekMode::SeekSet))
@@ -221,10 +205,8 @@ bool FILE_Read(char *name, void *context, u32 length, u32 pos)
                 ret = true;
             }
         }
-
         f.close();
     }
-
     if(false == ret)
     {
         LOG("[FILESYSTEM] Read error ");
@@ -246,10 +228,8 @@ bool FILE_update(char *name, void *context, u32 length, u32 pos)
     bool ret = false;
 
     File f = SPIFFS.open(name, "r+");
-
     if(NULL != f)
     {
-
         if(false != f.seek(pos, SeekMode::SeekSet))
         {
             if(false != FILE_write_internal(&f, context, length))
@@ -257,23 +237,23 @@ bool FILE_update(char *name, void *context, u32 length, u32 pos)
                 ret = true;
             }
         }
-
         f.close();
     }
     if(false == ret)
     {
         LOG("[FILESYSTEM] Update error ");
     }
+
     return ret;
 }
 
-//! Gives all filenames in "/" directory
+//! Gives all filenames in root directory
 /*!
     \return : string, filenames seperated with comma in a string
 */
 String FILE_get_file_list()
 {
-    String path = "/";
+    String path = FS_ROOTDIR;
     Dir dir = SPIFFS.openDir(path);
     String output = "[";
     while(dir.next())
@@ -283,11 +263,11 @@ String FILE_get_file_list()
         {
             output += ",";
         }
-        output += String(entry.fullName()); //name()).substring(1); //name ile fullname aynı sonucu veriyor
+        output += String(entry.fullName()); //name()).substring(1); //Fixme: name ile fullname aynı sonucu veriyor
         entry.close();
     }
-
     output += "]";
+
     return output;
 }
 
@@ -331,8 +311,13 @@ bool FILE_IsExists(char *name)
 
 size_t FILE_get_size(char *name)
 {
+    size_t ret = 0;
     File f = SPIFFS.open(name, "r");
-    size_t ret = f.size();
-    f.close();
+    if(NULL != f)
+    {
+        ret = f.size();
+        f.close();
+    }
+
     return ret;
 }

@@ -29,16 +29,21 @@ time_t epoch(DateTime_t *dt)
     return t;
 }
 
-//-----------------------------------------------------------------
-// HW True Random Number Generator of ESP8266
-// return : 8 bit random generated value
+//! HW True Random Number Generator of ESP8266
+/*!
+    \return : 8 bit random generated value
+*/
 u8 esp_rand()
 {
     return *(u8 *)0x3FF20E44;
 }
-//-----------------------------------------------------------------
 
-//-----------------------------------------------------------------
+//! CRC16 checksum function with precalculated table
+/*!
+    \param i : input buffer
+    \param l : input buffer byte length
+    \return  : CRC16 checksum of input buffer with length l
+*/
 const u16 crc16t[256] =
 {
     0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,
@@ -74,11 +79,6 @@ const u16 crc16t[256] =
     0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8,
     0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
 };
-
-// CRC16 checksum function with precalculated table
-// param i : input buffer
-// param l : input buffer byte length
-// return  : CRC16 checksum of input buffer with length l
 u16 CRC16(u16 crc, unsigned char *i, unsigned int l)
 {
     unsigned int x;
@@ -91,6 +91,12 @@ u16 CRC16(u16 crc, unsigned char *i, unsigned int l)
     return crc;
 }
 
+//! The pstrcpy function copies s2 to s1 and returns last pointer of s1
+/*!
+  \param [in] s1       : Input string buffer (destination)
+  \param [in] s2       : Input string buffer (source)
+  \return last pointer of s1
+*/
 char *pstrcpy(char *s1, const char *s2)
 {
     char *dst = s1;
@@ -104,4 +110,3 @@ char *pstrcpy(char *s1, const char *s2)
 
     return s1 + len;
 }
-//-----------------------------------------------------------------

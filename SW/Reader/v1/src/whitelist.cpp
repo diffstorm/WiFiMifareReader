@@ -1,7 +1,6 @@
-#include <whitelist.h>
-#include <FileSystem.h>
-#include <tools.h>
-#include "DebugLog.h"
+#include "Whitelist.h"
+#include "FileSystem.h"
+#include "tools.h"
 
 // TODO : debuglog implementasyonu
 #define CRCUID 0xDEAD
@@ -540,7 +539,7 @@ void example_whitelist()
 
     WL_add(t->white5);
     WL_delete(t->white5.uid);
-    Serial.println("-1 cıkmali:");
+    LOG("-1 cıkmali:");
     WL_search(t->white5.uid);
     WL_add(t->white3);
 
@@ -585,9 +584,7 @@ void example_whitelist()
     itemptr = &item;
 
     WL_read(0, itemptr);
-    Serial.printf("%s\n", itemptr->detail.name);
+    LOGp("%s\n", itemptr->detail.name);
 
-    /*
-    */
     free(t);
 }

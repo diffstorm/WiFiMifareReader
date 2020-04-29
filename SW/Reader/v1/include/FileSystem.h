@@ -1,10 +1,11 @@
 #ifndef __FILESYSTEM_H__
 #define __FILESYSTEM_H__
+
+#include "types.h"
 #include <FS.h>
 #include <WString.h>
 
-
-bool FILE_Init();
+extern bool FILE_Init();
 
 //! Write data to a file (an internal function for fail safe structure)
 /*!
@@ -13,7 +14,7 @@ bool FILE_Init();
     \param length [input] : how many bytes data will be written
     \return : boolean, true if successful
 */
-bool FILE_write_internal(File *f, void *context, u32 length);
+extern bool FILE_write_internal(File *f, void *context, u32 length);
 
 //! Read context from a file (an internal function for fail safe structure)
 /*!
@@ -22,7 +23,7 @@ bool FILE_write_internal(File *f, void *context, u32 length);
     \param length [input] : how many bytes data will be read
     \return : boolean, true if successful
 */
-bool FILE_read_internal(File *f, void *context, u32 length);
+extern bool FILE_read_internal(File *f, void *context, u32 length);
 
 //! Append data to a file (this will add data to end of the file)
 /*!
@@ -31,7 +32,7 @@ bool FILE_read_internal(File *f, void *context, u32 length);
     \param length [input] : how many bytes data will be written
     \return : boolean, true if successful
 */
-bool FILE_Append(char *name, void *context, u32 length);
+extern bool FILE_Append(char *name, void *context, u32 length);
 
 //! Write context to a file (this will delete all data in the given file and add given length of data)
 /*!
@@ -40,7 +41,7 @@ bool FILE_Append(char *name, void *context, u32 length);
     \param length [input] : how many bytes data will be written
     \return : boolean, true if successful
 */
-bool FILE_Write(char *name, void *context, u32 length);
+extern bool FILE_Write(char *name, void *context, u32 length);
 
 
 //! Read data from the file from given position
@@ -51,7 +52,7 @@ bool FILE_Write(char *name, void *context, u32 length);
     \param pos [input] : beginning position of the read process in file
     \return : boolean, true if successful
 */
-bool FILE_Read(char *name, void *context, u32 lenght, u32 pos);
+extern bool FILE_Read(char *name, void *context, u32 lenght, u32 pos);
 
 //! Updates a file from given position
 /*!
@@ -61,23 +62,23 @@ bool FILE_Read(char *name, void *context, u32 lenght, u32 pos);
     \param pos [input] : beginning position of the write process in file
     \return : boolean, true if successful
 */
-bool FILE_update(char *name, void *context, u32 length, u32 pos);
+extern bool FILE_update(char *name, void *context, u32 length, u32 pos);
 
-//! Gives all filenames in "/" directory
+//! Gives all filenames in root directory
 /*!
     \return : string, filenames seperated with comma in a string
 */
-String FILE_get_file_list();
+extern String FILE_get_file_list();
 
 
-size_t FILE_get_dir_size(char *dir);
+extern size_t FILE_get_dir_size(char *dir);
 
-size_t FILE_system_available_size();
+extern size_t FILE_system_available_size();
 
-bool FILE_delete(char *name);
+extern bool FILE_delete(char *name);
 
-bool FILE_IsExists(char *name);
+extern bool FILE_IsExists(char *name);
 
-size_t FILE_get_size(char *name);
+extern size_t FILE_get_size(char *name);
 
-#endif
+#endif // __FILESYSTEM_H__

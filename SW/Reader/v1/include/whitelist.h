@@ -1,7 +1,6 @@
 #ifndef __WHITELIST_H__
 #define __WHITELIST_H__
 
-#include <stdint.h>
 #include "CardConfig.h"
 
 typedef struct __attribute__((packed))
@@ -18,28 +17,26 @@ typedef struct __attribute__((packed))
 }
 WL_item_t;
 
-void example_whitelist();
-
 //! Adds given uid to whitelist
 /*!
     \param item [input] : the struct which will be added to whitelist
     \return : boolean, true if successsful
 */
-bool WL_add(WL_item_t item);
+extern bool WL_add(WL_item_t item);
 
 //! Deletes given uid from whitelist (not only uid, includes name surname and crc)
 /*!
     \param uid [input] : the uid which will be deleted
     \return : boolean, true if successful
 */
-bool WL_delete(UID_t uid);
+extern bool WL_delete(UID_t uid);
 
 //! Search given uid in whitelist
 /*!
     \param uid [input] : the uid which will be searched
     \return : long, -1 if does not found, position if founds
 */
-long WL_search(UID_t uid);
+extern long WL_search(UID_t uid);
 
 //! Reads data (at given index) inside to item
 /*!
@@ -47,6 +44,6 @@ long WL_search(UID_t uid);
     \param item [output] : the data will be read in to
     \return : boolean, true if successful
 */
-bool WL_read(u16 index, WL_item_t *item);
+extern bool WL_read(u16 index, WL_item_t *item);
 
 #endif
