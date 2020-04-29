@@ -5,7 +5,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
+#include <time.h>
 #include "defs.h"
+#include "DebugLog.h"
 
 typedef uint8_t u8;
 typedef uint16_t u16;

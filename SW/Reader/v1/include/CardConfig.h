@@ -33,7 +33,7 @@ typedef struct __attribute__((packed))
 {
     Version_t version;
     CardType_t type;
-    DateTime_t record_date;
+    time_t record_date;
     UID_t uid;
 }
 CardInfo_t;
@@ -51,9 +51,10 @@ CardPersonal_t;
 
 typedef struct __attribute__((packed))
 {
-    u8 hour_begin; // < 24 for valid hour
-    u8 hour_end; // < 24 for valid hour
+    u8 hour_begin; // not zero for valid hour
+    u8 hour_end; // not zero for valid hour
     u8 dow;
+    time_t validuntil;
 }
 CardRestrictions_t;
 

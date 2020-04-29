@@ -4,6 +4,10 @@
 #include <IRutils.h>
 #include <IR.h>
 
+#ifdef IR_CARD_DETECT
+#define IRSend_led  0
+#define IRRecv_led  2
+
 IRrecv irrecv(IRRecv_led);
 IRsend irsend(IRSend_led);
 
@@ -32,4 +36,5 @@ bool IR_Handler()
     irrecv.resume(); // Receive the next value
 
     return ret;
-}*/
+}
+#endif

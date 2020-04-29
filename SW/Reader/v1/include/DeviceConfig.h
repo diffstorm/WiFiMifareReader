@@ -29,33 +29,50 @@ typedef enum : u8
 }
 PassingType_t;
 
-typedef struct __attribute__((packed)) // Wifi profile
+typedef struct __attribute__((packed)) // Wifi profile for STA
+{
+    bool active : 8;
+    u8 bssid[6];
+    bool bssid_active;
+    char ssid[SSID_LEN_MAX];
+    char psk[PSK_LEN_MAX];
+    bool dhcp : 8;
+    u32 ip;     // 192.168.1.100
+    u32 subnet; // 255.255.255.1
+    u32 gateway;// 192.168.1.1
+    u32 dns;    // 156.154.70.22
+    u32 dns2;   // 156.154.71.22
+}
+WiFiProfileSTA_t;
+
+typedef struct __attribute__((packed)) // Wifi profile for AP
 {
     bool active : 8;
     char ssid[SSID_LEN_MAX];
     char psk[PSK_LEN_MAX];
-    bool dhcp : 8; // (STA)
-    u32 ip;     // 192.168.1.100 (AP, STA)
-    u32 subnet; // 255.255.255.1 (AP, STA)
-    u32 gateway;// 192.168.1.1   (STA)
-    u32 dns;    // 156.154.70.22 (STA)
-    u32 dns2;   // 156.154.71.22 (STA)
+    u32 ip;     // 192.168.4.1
+    u32 subnet; // 255.255.255.1
+    bool ssid_hidden;
+    u8 channel; // 1 ~ 13
 }
-WiFiProfile_t;
+WiFiProfileAP_t;
 
 typedef struct __attribute__((packed))
 {
-    WiFiProfile_t STA;       // Connection parameters as station
-    WiFiProfile_t AP;        // Connection parameters as access point
+    WiFiProfileSTA_t STA;       // Connection parameters as station
+    WiFiProfileAP_t AP;        // Connection parameters as access point
 }
 WiFiConfig_t;
 
 typedef struct __attribute__((packed))
 {
+    char addr[DEVICE_CFG_ADDR_LENGTH]; // pool.ntp.org
+    char addr2[DEVICE_CFG_ADDR_LENGTH];
+    char addr3[DEVICE_CFG_ADDR_LENGTH];
     u32 ip;
     u16 port;
     u8 period; // [hours]
-    u8 timezone; // [hours] - Turkey UTC+03:00
+    int8_t timezone; // [hours] - Turkey UTC+03:00
 }
 NTPSettings_t;
 
@@ -80,8 +97,8 @@ typedef struct __attribute__((packed))
     u8 hour_begin;
     u8 hour_end;
     u8 dow;
-    bool VisitorPass; // Can VISITOR card pass?
-    bool GuardPass; // Can GUARD card pass?
+    bool Visitor; // VISITOR card restricted?
+    bool Guard; // GUARD card restricted?
 }
 DeviceRestrictions_t;
 
@@ -107,7 +124,7 @@ typedef struct __attribute__((packed))
 {
     bool active;
     LogSendTimeType_t logSendTimeType;
-    u8 SpecificHours[LOG_SPECIFIC_HOURS_COUNT]; // < 24 for valid hour
+    u8 SpecificHours[LOG_SPECIFIC_HOURS_COUNT]; // not zero for valid hour
     LogSendMethod_t logSendMethod;
     union LogSendDetails
     {
@@ -126,8 +143,8 @@ LogSettings_t;
 
 typedef struct __attribute__((packed))
 {
-    u8 hour_begin; // < 24 for valid hour
-    u8 hour_end; // < 24 for valid hour
+    u8 hour_begin; // not zero for valid hour
+    u8 hour_end; // not zero for valid hour
     u16 period; // [ms]
 }
 CardScanRule_t;

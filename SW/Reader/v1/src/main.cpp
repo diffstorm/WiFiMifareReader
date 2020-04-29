@@ -28,31 +28,20 @@ void setup()
     ESP.wdtDisable();
     ESP.wdtEnable(WDTO_8S);
     Serial.begin(115200);
-    srand(time(NULL));
-    delay(300);
-
-    FILE_Init();
-    delay(500);
-    /*  ESP.wdtDisable();
-    #ifdef WDT
-        ESP.wdtEnable(WDTO_4S);
-    #endif
-        SetupBoard();
-    #ifdef SERIAL_PORT
-        Serial.begin(115200);
-        Serial.setDebugOutput(true);
-        Serial.flush();
-    #endif
-        Reader_Init();
-    #ifdef IR_CARD_DETECT
-        IR_Init();
-    #endif
-        BZR_Init();
-    #ifdef SERIAL_PORT
-        WiFi.printDiag(Serial);
-        system_show_malloc();
-    #endif
-    */
+    Serial.setDebugOutput(true);
+    Serial.flush();
+#endif
+    LOG_Init(115200);
+    Reader_Init();
+#ifdef IR_CARD_DETECT
+    IR_Init();
+#endif
+    BZR_Init();
+#ifdef SERIAL_PORT
+    WiFi.printDiag(Serial);
+    system_show_malloc();
+#endif
+    LOGp("Testing %d and %f also %s", 123, 12.3, "this");
 }
 static bool testdone = false;
 
