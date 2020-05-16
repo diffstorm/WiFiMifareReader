@@ -54,30 +54,30 @@ void DBG_LOG(const char *message, const char *func, const char *loc, int *i, flo
 void DBG_LOG(const char *message, const char *func, const char *loc, dl_type_t type, void *in, int size)
 {
     Serial.print(message);
-    switch (type)
+    switch(type)
     {
-    case dl_int:
+        case dl_int:
         {
             int *i = (int *)in;
             Serial.print(" ");
             Serial.print(*i);
         }
         break;
-    case dl_float:
+        case dl_float:
         {
             float *f = (float *)in;
             Serial.print(" ");
             Serial.print(*f);
         }
         break;
-    case dl_double:
+        case dl_double:
         {
             double *d = (double *)in;
             Serial.print(" ");
             Serial.print(*d);
         }
         break;
-    case dl_hex:
+        case dl_hex:
         {
             unsigned char *hex = (unsigned char *)in;
             if(NULL != hex && 0 < size)
@@ -96,8 +96,8 @@ void DBG_LOG(const char *message, const char *func, const char *loc, dl_type_t t
             }
         }
         break;
-    default:
-        break;
+        default:
+            break;
     }
     DBG_LOG_tail(func, loc);
 }

@@ -27,7 +27,7 @@ void DBG_LOG(const char *message, const char *func, const char *loc, int *i, flo
 #define LOGh(z, h)  DBG_LOG((const char *)z, (const char *)__func__, (const char *)__LOCATION, NULL, NULL, NULL, (char *)h, (int)sizeof(h))
 #define LOGb(z, h, s)  DBG_LOG((const char *)z, (const char *)__func__, (const char *)__LOCATION, NULL, NULL, NULL, (char *)h, (int)s)
 #else
-typedef enum 
+typedef enum
 {
     dl_none,
     dl_int,
